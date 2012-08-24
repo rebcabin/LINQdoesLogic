@@ -1,0 +1,11 @@
+You need to put the entire MATHPROG folder in a place where Mathematica can find it
+
+a good place to put it in Windows is 
+
+	%USERPROFILE%\AppData\Roaming\Mathematica\Applications
+
+On the mac, in 
+
+	~/Library/Mathematica/Applications
+
+Put the entire MATHPROG folder in the Applications folder in either system. Then run the notebook LOGICEXAMPLES.nb.

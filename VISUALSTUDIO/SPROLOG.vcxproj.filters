@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\SPR\EXAMPL1.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL2.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL3.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL4.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL5.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL6.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL7.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL8.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL9.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL10.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL11.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL12.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL13.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\EXAMPL14.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\HELP.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\MAKE.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\NETWORK.spr">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\VERIF.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\SPR\XREAD.SPR">
+      <Filter>SPR</Filter>
+    </None>
+    <None Include="..\LINQ\exampl1.linq">
+      <Filter>LINQ</Filter>
+    </None>
+    <None Include="..\LINQ\exampl3.linq">
+      <Filter>LINQ</Filter>
+    </None>
+    <None Include="..\INI\SPROLOG.INF">
+      <Filter>INI</Filter>
+    </None>
+    <None Include="..\INI\SPROLOG.INI">
+      <Filter>INI</Filter>
+    </None>
+    <None Include="..\DOC\CHANGES.91">
+      <Filter>DOC</Filter>
+    </None>
+    <None Include="..\DOC\FRMANUAL.TXT">
+      <Filter>DOC</Filter>
+    </None>
+    <None Include="..\DOC\PRMANUAL.TXT">
+      <Filter>DOC</Filter>
+    </None>
+    <None Include="..\BLOG\Intro.txt">
+      <Filter>BLOG</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="SPR">
+      <UniqueIdentifier>{4ad28c26-7f49-454e-ab81-3840fd9ba95c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC">
+      <UniqueIdentifier>{0d2491c0-00c5-4988-b6fe-43617972b2db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DOC">
+      <UniqueIdentifier>{1782e8ff-98f3-4f6b-ba46-656e1368a421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="INI">
+      <UniqueIdentifier>{0ce9cda2-d565-4acc-8016-128254d143e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LINQ">
+      <UniqueIdentifier>{5d2bc4cd-f7a2-4bd3-80db-883027684cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MMA">
+      <UniqueIdentifier>{e0204123-83c2-4458-a889-51d10bebaa0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BLOG">
+      <UniqueIdentifier>{ba5a8557-c908-4d1e-993c-7e26822be9fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\SRC\PRALLOC.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRASSERT.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRBLTIN.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRCNSULT.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRDEBUG.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRERROR.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRHASH.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRIBMPC.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRLUSH.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRMAIN.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRPARSE.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRPRINT.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRSCAN.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SRC\PRUNIFY.C">
+      <Filter>SRC</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\SRC\PRBLTIN.H">
+      <Filter>SRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SRC\PRLEX.H">
+      <Filter>SRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SRC\PRLUSH.H">
+      <Filter>SRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SRC\PROLOG.H">
+      <Filter>SRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SRC\PRTYPES.H">
+      <Filter>SRC</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
