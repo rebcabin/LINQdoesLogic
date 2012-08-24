@@ -13,3 +13,9 @@
 
 # Operating-system junk files
 .DS_Store
+
+# Visual-Studio junk files
+VISUALSTUDIO/_ReSharper*.*
+VISUALSTUDIO/Debug
+VISUALSTUDIO/*.sdf
+VISUALSTUDIO/ipch
