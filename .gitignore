@@ -10,3 +10,6 @@
 *.lai
 *.la
 *.a
+
+# Operating-system junk files
+.DS_Store
