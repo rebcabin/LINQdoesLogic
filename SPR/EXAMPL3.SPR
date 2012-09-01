@@ -89,7 +89,7 @@
  /* if the following are true */
 	 (density Thing Density)
  	 (rless Density 1.0)
-   /** /(not (water_soluble Thing))
+   /**/  (not (water_soluble Thing))
    /**/
 )
 

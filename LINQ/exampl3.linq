@@ -2,31 +2,58 @@
 
 void Main()
 {
-	CanFloatOnWater().Dump("(can_float_on_water X)");
+    var query = densities().GetEnumerator();
+    var reaper = new List<Density>();
+    for (var testVar = query.MoveNext();
+        testVar;
+        testVar = query.MoveNext())
+    {
+        reaper.Add(query.Current); // this is Mathematica's Sow!
+    }
+    reaper.Dump();
+    
+    CanFloatOnWater().Dump("(can_float_on_water X)");
 }
 
 IEnumerable<Density> CanFloatOnWater()
 {
-	var results = from d in densities()
-				  where Convert.ToDouble(d.Value) < 1.0
-				    /**/
-				    && !(from w in water_solubles()
-					     select w.Material).Contains(d.Material)
-					/**/
-				  select d
-				  ;
-	return results;
+    var 
+    /** /results = 
+        from d in densities()
+        where Convert.ToDouble(d.Value) < 1.0
+        && !(from w in water_solubles()
+            select w.Material).Contains(d.Material)
+        select d
+        ;
+    /** /results = 
+        from d in (
+            from d in densities()
+            where Convert.ToDouble(d.Value) < 1.0
+            select d)
+        where !(from w in water_solubles()
+                select w.Material).Contains(d.Material)
+        select d
+        ;
+    /**/
+    results = densities()
+        .Where(d => Convert.ToDouble(d.Value) < 1.0)
+        .Where(d => !water_solubles()
+            .Select(w => w.Material)
+            .Contains(d.Material))
+        ;
+    /**/
+    return results;
 }
 
 public class Density
 {
-	public string Material;
-	public string Value;
-	public Density (string material, string value)
-	{
-		Material = material;
-		Value = value;
-	}
+    public string Material;
+    public string Value;
+    public Density (string material, string value)
+    {
+        Material = material;
+        Value = value;
+    }
 }
 static IEnumerable<Density> densities() {return new [] {
 
@@ -58,11 +85,11 @@ new Density("fat", "0.94"),
 
 public class Solid
 {
-	public string Material;
-	public Solid(string material)
-	{
-		Material = material;
-	}
+    public string Material;
+    public Solid(string material)
+    {
+        Material = material;
+    }
 }
 
 static IEnumerable<Solid> solids() {return new [] {
@@ -88,11 +115,11 @@ new Solid("fat"),
 
 public class Liquid
 {
-	public string Material;
-	public Liquid(string material)
-	{
-		Material = material;
-	}
+    public string Material;
+    public Liquid(string material)
+    {
+        Material = material;
+    }
 }
 static IEnumerable<Liquid> liquids() {return new [] {
 
@@ -106,11 +133,11 @@ new Liquid("milk"),
 
 public class WaterSoluble
 {
-	public string Material;
-	public WaterSoluble(string material)
-	{
-		Material = material;
-	}
+    public string Material;
+    public WaterSoluble(string material)
+    {
+        Material = material;
+    }
 }
 static IEnumerable<WaterSoluble> water_solubles() {return new [] {
 
