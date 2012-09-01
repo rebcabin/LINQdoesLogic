@@ -1,0 +1,171 @@
+In the <a href="http://rebcabin.wordpress.com/2012/08/23/linq-does-logic-chapter-1/">prior chapter in this series</a>, we investigated <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL3.SPR">sample 3</a> of <a href="https://github.com/rebcabin/LINQdoesLogic/tree/master/VISUALSTUDIO">Feraudy's SProlog</a> (resurrected) and recapitulated the sample <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/exampl3.linq">in LINQ</a> and <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/MMA/LOGICEXAMPLES.nb">in an updated version of Maeder's Prolog-in-Mathematica</a> (let's call this MProlog from now on).
+
+This time, we:
+<ol>
+	<li>Add an additional condition to the rule "can-float-on-water" to exclude materials that are water soluble (!) and write it in all three implementations.</li>
+	<li>Create a new <em>Mathematica</em> version that emulates LINQ more closely, so that we have a pathway, in <em>Mathematica</em>, from full Prolog to something more LINQ-like. The purpose here is to give us an intellectual bridge to the C# world, LINQ's homeland.</li>
+</ol>
+In a later post, we'll discuss conjunctions in general, because adding a condition to the rule highlights that the rule is, logically, a conjunction -- a sequence of terms connected by <code>AND</code>. Turns out this is foundational to Prolog and something we need to keep in mind while building up our LINQ capability.
+
+The result of <code>(consult "SPR/EXAMPL3.SPR")</code> and then <code>(findall Thing (can_float_on_water Thing) List)</code> is the list
+<pre>List = (ethanol olive_oil petroleum almond_wood apricot_wood apple_wood walnut_wood maple poplar balsa fat)</pre>
+This looks ok except for the <code>ethanol</code>. Yes, it's specific gravity is 0.789, less than 1.0, so it does satisfy <code>(rless Density 1.0)</code> just as we wrote. But ethanol is water soluble, and I think no matter how carefully you pour it on top of water, in the manner of a <a href="http://en.wikipedia.org/wiki/Layered_drink">pousse-café</a>, it's <a href="http://en.wikipedia.org/wiki/Ethyl_alcohol#Solvent_properties">not possible to float a layer of ethanol on water</a> due to polar attraction at the molecular level.
+
+So we didn't write the program wrong, we wrote the wrong program.
+
+Let's fix this. First, add a few facts to the fact base:
+
+<code>(water_soluble water)
+(water_soluble sea_water)
+(water_soluble sugar)
+(water_soluble ethanol)
+(water_soluble milk)</code>
+
+and a new rule
+<pre>((can_float_on_water Thing )/* head */
+    /* if the following are true */
+    (density Thing Density)
+    (rless Density 1.0)
+    (not (water_soluble Thing))</pre>
+This time, when we run it, we get the List minus ethanol (in a new SProlog session -- SProlog can't handle consulting the file a second time)
+<pre>List = (olive_oil petroleum almond_wood apricot_wood apple_wood walnut_wood maple poplar balsa fat)</pre>
+Changes to the <em>Mathematica</em> version are almost identical:
+<pre>Assert[waterSoluble[water]];
+Assert[waterSoluble[seaWater]];
+Assert[waterSoluble[sugar]];
+Assert[waterSoluble[ethanol]];
+Assert[waterSoluble[milk]];
+
+Assert[canFloatOnWater[thing_],
+    density[thing_, d_],
+    d_ &lt; 1.0,
+    not[waterSoluble[thing_]]]</pre>
+as are the results
+
+<code>{thing-&gt;oliveOil}
+{thing-&gt;petroleum}
+{thing-&gt;almondWood}
+{thing-&gt;apricotWood}
+{thing-&gt;appleWood}
+{thing-&gt;walnutWood}
+{thing-&gt;maple}
+{thing-&gt;poplar}
+{thing-&gt;balsa}
+{thing-&gt;fat}</code>
+
+As with SProlog, we must restart the <em>Mathematica</em> session (Quit Kernel; Evaluate Notebook). This lends some evidence that both implementations, when reconsulting the facts and rules, are just adding new copies of the old information to the existing fact-and-rule base, and then they go a bit haywire when evaluating the queries. This is something to add to our list of things to look into, but, since we have an acceptable workaround, we won't bother with it now.
+
+What we <em>will</em> do is see if we can write the <em>Mathematica</em> version without all the MProlog machinery. This will look just like the LINQ one in C# and we'll interleave the development of LINQ in <em>Mathematica</em> with the development of our query in LINQ in C#. So we're going to go from SProlog to MProlog to MLINQ and C#-LINQ.
+
+The first thing is to capture the fact base in a straight list-of-rewrite-rules. This requires us to choose permanent names for the attributes of the Prolog predicates. Prolog lets you create new variables to name the attributes every time you do a query. If you say
+
+<code>QueryAll[density[x_, y_]]</code>
+
+That means that, this time, you'd like to call the first slot of any density fact -- the slot containing the name of a material -- by the name x and the second slot of any density fact -- the slot containing the value of the specific gravity -- by the name y. If you say
+
+<code>QueryAll[density[foo_, bar_]]</code>
+
+it means that you'd like to call them <code>foo</code> and <code>bar</code> this time, in the context of this query. 
+
+In the LINQ-ish version, whether written in <em>Mathematica</em> or in C#, we don't get to do this. In C# LINQ-ish, we're mapping Prolog predicates to C# objects of classes and Prolog attributes to C# properties of objects, and we must pick the names of properties statically in C#. Likewise, in <em>Mathematica</em> LINQ-ish, we're mapping Prolog facts to <em>Mathematica</em> lists of rewrite rules (which, as we shall see, are a great way to model objects in <em>Mathematica</em>). For the application of these rules, we will really need the attribute names -- the patterns to match in the rewrite rules -- to be statically known. If we need to rename the attributes for a different application -- if we need to be more Prolog-ish in our use of C# or Mathematica, we can do it by defining new classes or lists of rules.
+
+The point is: the need to pick attribute names more-or-less permanently is a real difference between Prolog-ish and LINQ-ish, but it doesn't seem to be a practical limitation or problem. We'll keep this in mind as we explore to see if there are deeper meanings or consequences as we go on.
+
+Now, to harvest the factbase into rewrite rules in <em>Mathematica</em>, we will use its beautiful <a href="http://reference.wolfram.com/mathematica/ref/Sow.html?q=Sow&amp;lang=en">Sow</a> and <a href="http://reference.wolfram.com/mathematica/ref/Reap.html">Reap</a> primitives. We notice that <em><strong>Prolog's interactive control paradigm -- an initial <code>Query</code> followed by any number of <code>Again</code>s -- is 100% imperative programming!</strong></em> This is ironic from theProlog, the "mother of all <a href="http://en.wikipedia.org/wiki/Declarative_programming">declarative programming</a> languages," but the resolution of the paradox is that Prolog is declarative in its fact-and-rules definitions, but definitely not -- even in pretense -- in its interaction model. Contrast this with Haskell, <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Prelude.html#g:24">which must introduces monads to address interactivity in a declarative manner</a>. There is much theoretical benefit to mine, there, but later. Back to harvesting the data in <em>Mathematica</em> -- the give-away of imperative programming is the presence of <code>For</code>:
+<pre>Reap[
+  Module[{testVar},
+   For[
+    testVar = Query[density[material_, value_]],
+    testVar =!= No,
+    testVar = Again[],
+    Sow[testVar]]]] [[2, 1]] // gridRules</pre>
+producing:
+
+<a href="http://rebcabin.files.wordpress.com/2012/08/capture003.jpg"><img class="alignnone size-medium wp-image-318" title="Capture003" src="http://rebcabin.files.wordpress.com/2012/08/capture003.jpg?w=300" alt="" width="300" height="273" /></a>
+
+using the <a href="http://rebcabin.wordpress.com/2012/08/02/grid-displays-of-data-structures-in-linqpad-and-mathematica/">gridRules utility from here</a>.
+
+We see that each density is a list of rewrite rules, one rule for rewriting the symbolic constant <code>material</code> and another rule for rewriting the symbolic constant <code>value</code>. For instance, one of the facts is <code>{material -&gt; seaWater, value -&gt; 1.03}</code>. To fetch the <code>material</code> out of this rule, write <code>material /. theRule</code>. That's the general scheme: to use the "values" of the "properties" in a rewrite rule, just apply the rule to a symbolic expression. It should be obvious that this is equivalent to property access from an object, where we would write <code>theObject.material</code> to fetch the value of the <code>material</code> property, only more general. With a C# object, only a property name can go to the right of the dot. With a rewrite rule, an arbitrary expression can go to the left of the slashdot <code>/.</code> operator, (slashdot is the infix operator for <code>ReplaceAll</code>.
+
+This harvesting code above looks almost exactly what we would write in C#, bypassing the syntactic sugar of <code>foreach</code>:
+<pre>var query = densities().GetEnumerator();
+var reaper = new List();
+for (var testVar = query.MoveNext();
+    testVar;
+    testVar = query.MoveNext())
+    {
+        reaper.Add(query.Current); // this is Mathematica's Sow!
+    }
+reaper.Dump();</pre>
+producing:
+
+<a href="http://rebcabin.files.wordpress.com/2012/08/capture004.jpg"><img class="alignnone size-medium wp-image-319" title="Capture004" src="http://rebcabin.files.wordpress.com/2012/08/capture004.jpg?w=300" alt="" width="300" height="230" /></a>
+
+Of course, in C# this is the same as calling <code>.ToList()</code> on the <code>IEnumerable</code> input, but in <em>Mathematica</em>, this teaches us that Prolog's <code>Query[...]</code> is a combination of C#'s <code>GetEnumerator</code> and one call of C#'s <code>MoveNext</code>, and that Prolog's <code>Again[]</code> is a combination of one call of <code>MoveNext</code> and one conditional call of <code>Current</code>. This realization suggests that we could rewrite SProlog in C# with LINQ very nicely, but that is another digression: we're trying to use LINQ straight-up to solve the same kinds of problems that Prolog solves.
+
+Let's use <code>Sow</code> and <code>Reap</code> as above to pull all the density facts into a function named <code>densities</code> that returns a list, just as in C# we pulled them all into a function named <code>densities</code> that returns an <code>IEnumerable&lt;Density&gt;</code>; and likewise pull all the <code>waterSoluble</code> facts into a function named <code>waterSolubles</code> that returns a list. We lose C#/LINQ's laziness at this point, but there are a number of ways for us to put it back, later. As already mentioned, though, we are giving up -- very much on purpose and without a known need for a fix later -- the freedom to name attributes arbitrarily.
+
+<em>Mathematica's</em> <code>Select</code> is LINQ's <code>Where</code>. Let's define the first of a namespace of LINQ-ish operators in <em>Mathematica</em>, then, as follows:
+<pre>Linq`Where = Select</pre>
+and now we can write our original query as
+<pre>Linq`Where[densities, (value /. #) &lt; 1.0 &amp;]</pre>
+This term: 
+<pre>(value /. #) &lt; 1.0 &amp;</pre>
+is a lambda expression with positional parameters in <em>Mathematica</em>. The ampersand at the end tells us so, and the hash-mark in the middle is the sole parameter of the expression. If there were more, they would be denoted #1, #2, and so on. So this entire expression means "filter <code>densities</code> with the following lambda expression as Boolean predicate." We could write it in postfix form as follows
+<pre>densities // Where[#, &lt;<em>predicate-lambda-expression</em>&gt;]&amp;</pre>
+We've converted the <code>Where</code> call to another lambda expression and applied it via <a href="http://reference.wolfram.com/mathematica/ref/Postfix.html">the <code>Postfix</code> call operation</a> that, amusingly enough, is represented by the infix operator <code>//</code> (slashslash is the infix operator for <code>Postfix</code>!)
+
+This is a lot of non-sugary syntax, but it's actually quite close to what we would write in <a href="http://www.albahari.com/nutshell/10linqmyths.aspx">C#'s fluent syntax</a>, which is exactly equivalent to what we wrote at the <a href="http://rebcabin.wordpress.com/2012/08/23/linq-does-logic-chapter-1/">end of Chapter 1 of this series</a>, only then in query-comprehension syntax:
+<pre>results = densities()
+    .Where(d =&gt; Convert.ToDouble(d.Value) &lt; 1.0)
+    ;</pre>
+Staying with C#, now, since we've reoriented there, we may add our next condition in the form of checking that each material that passes the first filter is not a member of another list made of <code>Select</code>ing the <code>material</code> properties out of the <code>water_solubles</code>collection:
+<pre>results = densities()
+    .Where(d =&gt; Convert.ToDouble(d.Value) &lt; 1.0)
+    .Where(d =&gt; !water_solubles()
+        .Select(w =&gt; w.Material)
+        .Contains(d.Material))
+    ;</pre>
+This is not efficient, as it scans the <code>water_solubles</code> list for each material. It has avoidable <a href="http://simple.wikipedia.org/wiki/Computational_complexity_theory#Quadratic_complexity">quadratic complexity</a>, and we'll fix that later. At least it is a crystal-clear rendition of the original Prolog query, with lots of syntactic parallelism, and some syntactic gargoyles, which we will also fix. In comprehension syntax, this looks like the following:
+<pre>results = from d in (
+                   from d in densities()
+                   where Convert.ToDouble(d.Value) &lt; 1.0
+                   select d)
+               where !(from w in water_solubles()
+                       select w.Material).Contains(d.Material)
+               select d
+               ;</pre>
+In comprehension syntax, the nesting is unnatural. Let's pull the second condition into the outer <code>Where</code>, connected with <code>&amp;&amp;</code> conjunction operator, so we have finally gotten around to justifying the title -- <strong>Conjunctions</strong> -- of this chapter:
+<pre>results = from d in densities()
+               where Convert.ToDouble(d.Value) &lt; 1.0
+                 &amp;&amp; !(from w in water_solubles()
+                      select w.Material).Contains(d.Material)
+                  select d
+                  ;</pre>
+There is no difference in semantics or performance to the chained form in fluent syntax or the nested form in comprehension syntax.
+
+To finish off this chapter, here are the equivalents in non-Prologuish <em>Mathematica</em>, introducing <a href="http://reference.wolfram.com/mathematica/ref/Function.html">lambda expressions with named parameters</a> via the <a href="http://reference.wolfram.com/mathematica/ref/character/Function.html"><code>\[Function]</code></a> arrow, first in the nested form:
+<pre>densities[] // 
+  Linq`Where[#, d \[Function]
+     (value /. d) &lt; 1.0] &amp; //
+ Linq`Where[#, d \[Function]
+    Not@((waterSolubles[] // 
+         Linq`Select[#, x \[Function] material /. x] &amp;) //
+       Linq`Contains[#, material /. d] &amp;)
+   ] &amp;</pre>
+and in conjunctive form
+<pre>densities[] // 
+ Linq`Where[#, d \[Function] (value /. d) &lt; 1.0 &amp;&amp;
+     Not@((waterSolubles[] //
+          Linq`Select[#, x \[Function] material /. x] &amp;) //
+        Linq`Contains[#, material /. d] &amp;)] &amp;</pre>
+In those samples, we use the positional-parameter form of lambda expression -- with hash marks and ampersands -- only to support postfix notation, so that we may have as close a parallel to C#'s fluent syntax as we can, though no apologies for <em>Mathematica</em>'s very crunchy operator syntax.
+
+We've shown that we can easily migrate implicit conjunctive forms from Prolog to LINQ and that we can promote them to explicit conjunctive forms with the <code>&amp;&amp;</code> operator. In the offing, we have exposed a number of important questions -- and that's what we're supposed to be doing in this blog, namely
+<ol>
+	<li>how to restore laziness?</li>
+        <li>is the need to pick attribute names permanently a real problem?</li>
+        <li>whether and how to fix the syntactic gargoyles</li>
+	<li>how to fix the avoidable quadratic complexity?</li>
+	<li>what are the differences between explicit conjunctions (with <code>&amp;&amp;</code>) and implicit conjunctions (as in chained LINQ <code>Where</code>s or just listing them in Prolog)</li>
+</ol>
