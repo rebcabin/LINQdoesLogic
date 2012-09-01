@@ -65,13 +65,13 @@ That means that, this time, you'd like to call the first slot of any density fac
 
 <code>QueryAll[density[foo_, bar_]]</code>
 
-it means that you'd like to call them <code>foo</code> and <code>bar</code> this time, in the context of this query. 
+it means that you'd like to call them <code>foo</code> and <code>bar</code> this time, in the context of this query.
 
 In the LINQ-ish version, whether written in <em>Mathematica</em> or in C#, we don't get to do this. In C# LINQ-ish, we're mapping Prolog predicates to C# objects of classes and Prolog attributes to C# properties of objects, and we must pick the names of properties statically in C#. Likewise, in <em>Mathematica</em> LINQ-ish, we're mapping Prolog facts to <em>Mathematica</em> lists of rewrite rules (which, as we shall see, are a great way to model objects in <em>Mathematica</em>). For the application of these rules, we will really need the attribute names -- the patterns to match in the rewrite rules -- to be statically known. If we need to rename the attributes for a different application -- if we need to be more Prolog-ish in our use of C# or Mathematica, we can do it by defining new classes or lists of rules.
 
 The point is: the need to pick attribute names more-or-less permanently is a real difference between Prolog-ish and LINQ-ish, but it doesn't seem to be a practical limitation or problem. We'll keep this in mind as we explore to see if there are deeper meanings or consequences as we go on.
 
-Now, to harvest the factbase into rewrite rules in <em>Mathematica</em>, we will use its beautiful <a href="http://reference.wolfram.com/mathematica/ref/Sow.html?q=Sow&amp;lang=en">Sow</a> and <a href="http://reference.wolfram.com/mathematica/ref/Reap.html">Reap</a> primitives. We notice that <em><strong>Prolog's interactive control paradigm -- an initial <code>Query</code> followed by any number of <code>Again</code>s -- is 100% imperative programming!</strong></em> This is ironic from theProlog, the "mother of all <a href="http://en.wikipedia.org/wiki/Declarative_programming">declarative programming</a> languages," but the resolution of the paradox is that Prolog is declarative in its fact-and-rules definitions, but definitely not -- even in pretense -- in its interaction model. Contrast this with Haskell, <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Prelude.html#g:24">which must introduces monads to address interactivity in a declarative manner</a>. There is much theoretical benefit to mine, there, but later. Back to harvesting the data in <em>Mathematica</em> -- the give-away of imperative programming is the presence of <code>For</code>:
+Now, to harvest the factbase into rewrite rules in <em>Mathematica</em>, we will use its beautiful <a href="http://reference.wolfram.com/mathematica/ref/Sow.html?q=Sow&amp;lang=en">Sow</a> and <a href="http://reference.wolfram.com/mathematica/ref/Reap.html">Reap</a> primitives. We notice that <em><strong>Prolog's interactive control paradigm -- an initial <code>Query</code> followed by any number of <code>Again</code>s -- is 100% imperative programming!</strong></em> This is ironic from Prolog, the "mother of all <a href="http://en.wikipedia.org/wiki/Declarative_programming">declarative programming</a> languages," but the resolution of the paradox is that Prolog is declarative in its fact-and-rules definitions, but definitely not -- even in pretense -- in its interaction model. Contrast this with Haskell, <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Prelude.html#g:24">which must introduces monads to address interactivity in a declarative manner</a>. There is much theoretical benefit to mine, there, but later. Back to harvesting the data in <em>Mathematica</em> -- the give-away of imperative programming is the presence of <code>For</code>:
 <pre>Reap[
   Module[{testVar},
    For[
@@ -87,7 +87,7 @@ using the <a href="http://rebcabin.wordpress.com/2012/08/02/grid-displays-of-dat
 
 We see that each density is a list of rewrite rules, one rule for rewriting the symbolic constant <code>material</code> and another rule for rewriting the symbolic constant <code>value</code>. For instance, one of the facts is <code>{material -&gt; seaWater, value -&gt; 1.03}</code>. To fetch the <code>material</code> out of this rule, write <code>material /. theRule</code>. That's the general scheme: to use the "values" of the "properties" in a rewrite rule, just apply the rule to a symbolic expression. It should be obvious that this is equivalent to property access from an object, where we would write <code>theObject.material</code> to fetch the value of the <code>material</code> property, only more general. With a C# object, only a property name can go to the right of the dot. With a rewrite rule, an arbitrary expression can go to the left of the slashdot <code>/.</code> operator, (slashdot is the infix operator for <code>ReplaceAll</code>.
 
-This harvesting code above looks almost exactly what we would write in C#, bypassing the syntactic sugar of <code>foreach</code>:
+This harvesting code above looks almost exactly like what we would write in C#, bypassing the syntactic sugar of <code>foreach</code>:
 <pre>var query = densities().GetEnumerator();
 var reaper = new List();
 for (var testVar = query.MoveNext();
@@ -109,7 +109,7 @@ Let's use <code>Sow</code> and <code>Reap</code> as above to pull all the densit
 <pre>Linq`Where = Select</pre>
 and now we can write our original query as
 <pre>Linq`Where[densities, (value /. #) &lt; 1.0 &amp;]</pre>
-This term: 
+This term:
 <pre>(value /. #) &lt; 1.0 &amp;</pre>
 is a lambda expression with positional parameters in <em>Mathematica</em>. The ampersand at the end tells us so, and the hash-mark in the middle is the sole parameter of the expression. If there were more, they would be denoted #1, #2, and so on. So this entire expression means "filter <code>densities</code> with the following lambda expression as Boolean predicate." We could write it in postfix form as follows
 <pre>densities // Where[#, &lt;<em>predicate-lambda-expression</em>&gt;]&amp;</pre>
@@ -135,7 +135,7 @@ This is not efficient, as it scans the <code>water_solubles</code> list for each
                        select w.Material).Contains(d.Material)
                select d
                ;</pre>
-In comprehension syntax, the nesting is unnatural. Let's pull the second condition into the outer <code>Where</code>, connected with <code>&amp;&amp;</code> conjunction operator, so we have finally gotten around to justifying the title -- <strong>Conjunctions</strong> -- of this chapter:
+In comprehension syntax, the nesting is unnatural. Let's pull the first condition into the outer <code>Where</code>, connected with a <code>&amp;&amp;</code> conjunction operator, so we have finally gotten around to justifying the title -- <strong>Conjunctions</strong> -- of this chapter:
 <pre>results = from d in densities()
                where Convert.ToDouble(d.Value) &lt; 1.0
                  &amp;&amp; !(from w in water_solubles()
@@ -164,8 +164,8 @@ In those samples, we use the positional-parameter form of lambda expression -- w
 We've shown that we can easily migrate implicit conjunctive forms from Prolog to LINQ and that we can promote them to explicit conjunctive forms with the <code>&amp;&amp;</code> operator. In the offing, we have exposed a number of important questions -- and that's what we're supposed to be doing in this blog, namely
 <ol>
 	<li>how to restore laziness?</li>
-        <li>is the need to pick attribute names permanently a real problem?</li>
-        <li>whether and how to fix the syntactic gargoyles</li>
+	<li>is the need to pick attribute names permanently a real problem?</li>
+	<li>whether and how to fix the syntactic gargoyles</li>
 	<li>how to fix the avoidable quadratic complexity?</li>
 	<li>what are the differences between explicit conjunctions (with <code>&amp;&amp;</code>) and implicit conjunctions (as in chained LINQ <code>Where</code>s or just listing them in Prolog)</li>
 </ol>
