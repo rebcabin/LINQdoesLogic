@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     59640,       2357]
-NotebookOptionsPosition[     45019,       1847]
-NotebookOutlinePosition[     45786,       1874]
-CellTagsIndexPosition[     45743,       1871]
+NotebookDataLength[    198335,       6344]
+NotebookOptionsPosition[    182083,       5784]
+NotebookOutlinePosition[    182847,       5810]
+CellTagsIndexPosition[    182804,       5807]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1273,20 +1273,18 @@ of patience and a fast computer."
  Evaluatable->False,
  AspectRatioFixed->True],
 
-Cell[CellGroupData[{
+Cell["\<\
+This only takes 20 seconds on a modern computer nowadays (Maeder wrote the \
+comment above in 1992 and it\[CloseCurlyQuote]s 2012 now). \
+I\[CloseCurlyQuote]m commenting this out because we need to run this file \
+multiple times and we don\[CloseCurlyQuote]t want to wait even 20 seconds for \
+this. Uncomment it if you want to prove to yourself that it works.  \
+\>", "Text",
+ FontColor->RGBColor[0.5, 0, 0.5],
+ Background->GrayLevel[0.85]],
 
-Cell["Timing @ Query[ win[list[3, 4, 5], t_] ]", "Input",
- CellChangeTimes->{{3.554756166407426*^9, 3.5547561717694263`*^9}},
- AspectRatioFixed->True],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{"20.492909`", ",", 
-   RowBox[{"{", 
-    RowBox[{"t", "\[Rule]", 
-     RowBox[{"take", "[", 
-      RowBox[{"1", ",", "2"}], "]"}]}], "}"}]}], "}"}]], "Output"]
-}, Open  ]]
+Cell["(* Timing @ Query[ win[list[3, 4, 5], t_] ] *)", "Input",
+ AspectRatioFixed->True]
 }, Open  ]]
 }, Open  ]],
 
@@ -1550,7 +1548,7 @@ Cell[BoxData[{
    RowBox[{"Assert", "[", 
     RowBox[{"density", "[", 
      RowBox[{"petroleum", ",", "0.80"}], "]"}], "]"}], ";"}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Assert", "[", 
    RowBox[{"density", "[", 
@@ -1776,15 +1774,36 @@ Cell[BoxData[
 }, Open  ]]
 }, Open  ]],
 
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{"waterSoluble", "[", "water", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{"waterSoluble", "[", "seaWater", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{"waterSoluble", "[", "sugar", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{"waterSoluble", "[", "ethanol", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{"waterSoluble", "[", "milk", "]"}], "]"}], ";"}]}], "Input"],
+
 Cell[BoxData[
  RowBox[{"Assert", "[", 
   RowBox[{
    RowBox[{"canFloatOnWater", "[", "thing_", "]"}], ",", " ", 
    RowBox[{"density", "[", 
     RowBox[{"thing_", ",", " ", "d_"}], "]"}], ",", " ", 
-   RowBox[{"d_", " ", "<", " ", "1.0"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.5547604296597724`*^9, 3.5547604761374197`*^9}, 
-   3.5547605371005154`*^9}],
+   RowBox[{"d_", " ", "<", " ", "1.0"}], ",", " ", 
+   RowBox[{"not", "[", 
+    RowBox[{"waterSoluble", "[", "thing_", "]"}], "]"}]}], "]"}]], "Input"],
 
 Cell[CellGroupData[{
 
@@ -1794,10 +1813,6 @@ Cell[BoxData[
  CellChangeTimes->{{3.5547604810519114`*^9, 3.5547604948632917`*^9}}],
 
 Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{"thing", "\[Rule]", "ethanol"}], "}"}]], "Print"],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -1840,7 +1855,3929 @@ Cell[BoxData[
   RowBox[{"thing", "\[Rule]", "fat"}], "}"}]], "Print"]
 }, Open  ]]
 }, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Example 3 Recasted as a Join-Filter\
+\>", "Subsection"],
+
+Cell[TextData[{
+ "First, capture the fact-base as lists of rewrite rules. We must choose \
+final names for the properties. Prolog lets us create new variable names in \
+every query; LINQ style requires us to choose property names for each of the \
+attributes of a prologuish predicate. Remember that a predicate in Prolog is \
+like a class in C#/LINQ and like a symbolic Head in ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ ". Let\[CloseCurlyQuote]s choose names for the properties / attributes to \
+mimic the C#/LINQ solution."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Query", "[", 
+  RowBox[{"density", "[", 
+   RowBox[{"material_", ",", "value_"}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"material", "\[Rule]", "seaWater"}], ",", 
+   RowBox[{"value", "\[Rule]", "1.03`"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Query, here, functions like a combined call of GetEnumerator and MoveNext. \
+Let\[CloseCurlyQuote]s define a function to harvest the results from a \
+repeated Query (QueryAll just Prints them)\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"harvest", "[", "query_", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Reap", "[", "\[IndentingNewLine]", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", "testVar", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"For", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"testVar", "=", 
+         RowBox[{"Query", "[", "query", "]"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"testVar", "=!=", "No"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"testVar", "=", 
+         RowBox[{"Again", "[", "]"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"Sow", "[", "testVar", "]"}]}], "]"}]}], "]"}], "]"}], " ", 
+   "\[LeftDoubleBracket]", 
+   RowBox[{"2", ",", "1"}], "\[RightDoubleBracket]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"densities", "[", "]"}], "=", 
+  RowBox[{"harvest", "[", 
+   RowBox[{"density", "[", 
+    RowBox[{"material_", ",", "value_"}], "]"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "seaWater"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.03`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "milk"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.03`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "ethanol"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.789`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "iridium"}], ",", 
+     RowBox[{"value", "\[Rule]", "22.64`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "lead"}], ",", 
+     RowBox[{"value", "\[Rule]", "11.34`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "plutonium"}], ",", 
+     RowBox[{"value", "\[Rule]", "19.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "copper"}], ",", 
+     RowBox[{"value", "\[Rule]", "8.94`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "steel"}], ",", 
+     RowBox[{"value", "\[Rule]", "7.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "mercury"}], ",", 
+     RowBox[{"value", "\[Rule]", "13.6`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "gold"}], ",", 
+     RowBox[{"value", "\[Rule]", "19.3`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "diamond"}], ",", 
+     RowBox[{"value", "\[Rule]", "3.51`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "glass"}], ",", 
+     RowBox[{"value", "\[Rule]", "2.5`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "sugar"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.6`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"densities", "[", "]"}], "//", "gridRules"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"seaWater"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"1.03`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"milk"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"1.03`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"ethanol"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.789`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"oliveOil"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.92`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"petroleum"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.8`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"almondWood"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.99`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"apricotWood"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.89`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"appleWood"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.88`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"walnutWood"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.8`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"maple"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.7`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"poplar"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.45`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"balsa"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.12`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"iridium"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"22.64`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"lead"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"11.34`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"plutonium"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"19.7`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"copper"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"8.94`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"steel"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"7.8`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"mercury"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"13.6`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"gold"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"19.3`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"diamond"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"3.51`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"glass"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"2.5`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"sugar"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"1.6`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"fat"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]},
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"value"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"0.94`"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]}
+   },
+   AutoDelete->False,
+   FrameStyle->RGBColor[0, 
+     Rational[2, 3], 0],
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxBackground->{"Columns" -> {{
+        RGBColor[0.88, 1, 0.88]}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Grid"]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"waterSolubles", "[", "]"}], "=", 
+    RowBox[{"harvest", "[", 
+     RowBox[{"waterSoluble", "[", "material_", "]"}], "]"}]}], ")"}], "//", 
+  "gridRules"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"water"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"seaWater"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"sugar"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"ethanol"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]},
+    {
+     TagBox[GridBox[{
+        {
+         TagBox[GridBox[{
+            {
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"material"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->GrayLevel[0],
+              FrontFaceColor->GrayLevel[0],
+              BackFaceColor->GrayLevel[0],
+              GraphicsColor->GrayLevel[0],
+              FontWeight->Bold,
+              FontColor->GrayLevel[0]], 
+             StyleBox[
+              StyleBox[
+               TagBox[GridBox[{
+                  {"milk"}
+                 },
+                 AutoDelete->False,
+                 GridBoxAlignment->{"Columns" -> {{Left}}},
+                 
+                 GridBoxItemSize->{
+                  "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+                "Grid"],
+               StripOnInput->False,
+               FontWeight->Bold],
+              StripOnInput->False,
+              LineColor->RGBColor[0, 0, 1],
+              FrontFaceColor->RGBColor[0, 0, 1],
+              BackFaceColor->RGBColor[0, 0, 1],
+              GraphicsColor->RGBColor[0, 0, 1],
+              FontWeight->Bold,
+              FontColor->RGBColor[0, 0, 1]]}
+           },
+           AutoDelete->False,
+           FrameStyle->RGBColor[0, 0, 1],
+           GridBoxAlignment->{"Columns" -> {{Left}}},
+           GridBoxBackground->{"Columns" -> {
+               RGBColor[1, 0.9, 0.8], {
+                RGBColor[1, 1, 0.85]}}},
+           GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+           
+           GridBoxItemSize->{
+            "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+          "Grid"]}
+       },
+       AutoDelete->False,
+       FrameStyle->RGBColor[0, 
+         Rational[2, 3], 0],
+       GridBoxAlignment->{"Columns" -> {{Left}}},
+       GridBoxBackground->{"Columns" -> {{
+            RGBColor[0.88, 1, 0.88]}}},
+       GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+       GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+      "Grid"]}
+   },
+   AutoDelete->False,
+   FrameStyle->RGBColor[0, 
+     Rational[2, 3], 0],
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxBackground->{"Columns" -> {{
+        RGBColor[0.88, 1, 0.88]}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Grid"]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "\[CloseCurlyQuote]s Select is LINQ\[CloseCurlyQuote]s ",
+ StyleBox["Where",
+  FontSlant->"Italic"],
+ ". This is the first of a ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " namespace of LINQ-ish operators we will build up:"
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Linq`Where", "=", "Select"}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Linq`Where", "[", 
+  RowBox[{
+   RowBox[{"densities", "[", "]"}], ",", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"value", "/.", "#"}], ")"}], "<", "1.0"}], "&"}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "ethanol"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.789`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Our original query, from Chapter 1 of the series, looks like this\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"densities", "[", "]"}], "//", 
+  RowBox[{
+   RowBox[{"Linq`Where", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"value", "/.", "#"}], ")"}], "<", "1.0"}], "&"}]}], "]"}], 
+   "&"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "ethanol"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.789`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "\[CloseCurlyQuote]s Map is LINQ\[CloseCurlyQuote]s Select, with the \
+arguments in the opposite order (for postfix chaining):"
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Linq`Select", "[", 
+   RowBox[{"list_", ",", "projector_"}], "]"}], ":=", 
+  RowBox[{"Map", "[", 
+   RowBox[{"projector", ",", "list"}], "]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"densities", "[", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "seaWater"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.03`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "milk"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.03`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "ethanol"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.789`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "iridium"}], ",", 
+     RowBox[{"value", "\[Rule]", "22.64`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "lead"}], ",", 
+     RowBox[{"value", "\[Rule]", "11.34`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "plutonium"}], ",", 
+     RowBox[{"value", "\[Rule]", "19.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "copper"}], ",", 
+     RowBox[{"value", "\[Rule]", "8.94`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "steel"}], ",", 
+     RowBox[{"value", "\[Rule]", "7.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "mercury"}], ",", 
+     RowBox[{"value", "\[Rule]", "13.6`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "gold"}], ",", 
+     RowBox[{"value", "\[Rule]", "19.3`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "diamond"}], ",", 
+     RowBox[{"value", "\[Rule]", "3.51`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "glass"}], ",", 
+     RowBox[{"value", "\[Rule]", "2.5`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "sugar"}], ",", 
+     RowBox[{"value", "\[Rule]", "1.6`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Linq`Contains", "=", "MemberQ"}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"densities", "[", "]"}], " ", "//", " ", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Linq`Where", "[", 
+     RowBox[{"#", ",", 
+      RowBox[{"d", "\[Function]", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"value", "/.", "d"}], ")"}], "<", "1.0"}]}]}], "]"}], 
+    "&"}]}], "//", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Linq`Where", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{"d", "\[Function]", "\[IndentingNewLine]", 
+      RowBox[{"Not", "@", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"waterSolubles", "[", "]"}], "//", 
+           RowBox[{
+            RowBox[{"Linq`Select", "[", 
+             RowBox[{"#", ",", 
+              RowBox[{"x", "\[Function]", 
+               RowBox[{"material", "/.", "x"}]}]}], "]"}], "&"}]}], ")"}], "//",
+          "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Linq`Contains", "[", 
+           RowBox[{"#", ",", 
+            RowBox[{"material", "/.", "d"}]}], "]"}], "&"}]}], ")"}]}]}]}], 
+    "\[IndentingNewLine]", "]"}], "&"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"densities", "[", "]"}], " ", "//", " ", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Linq`Where", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{"d", "\[Function]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"value", "/.", "d"}], ")"}], "<", "1.0"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Not", "@", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"waterSolubles", "[", "]"}], "//", "\[IndentingNewLine]", 
+            
+            RowBox[{
+             RowBox[{"Linq`Select", "[", 
+              RowBox[{"#", ",", 
+               RowBox[{"x", "\[Function]", 
+                RowBox[{"material", "/.", "x"}]}]}], "]"}], "&"}]}], ")"}], "//",
+           "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"Linq`Contains", "[", 
+            RowBox[{"#", ",", 
+             RowBox[{"material", "/.", "d"}]}], "]"}], "&"}]}], ")"}]}]}]}]}],
+     "]"}], "&"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "oliveOil"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.92`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "petroleum"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "almondWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.99`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "apricotWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.89`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "appleWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.88`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "walnutWood"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.8`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "maple"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.7`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "poplar"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.45`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "balsa"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.12`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"material", "\[Rule]", "fat"}], ",", 
+     RowBox[{"value", "\[Rule]", "0.94`"}]}], "}"}]}], "}"}]], "Output"]
 }, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+INITIALIZATION CELLS (UTILITIES)\
+\>", "Section"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"gridRules", ",", "fopts"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", 
+    RowBox[{
+    "allAreRulesQ", ",", "noneAreAtomsQ", ",", "noneAreAtomsOrListsQ"}], 
+    "]"}], ";"}], "\n", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+    "A", " ", "\"\<HoldAll\>\"", " ", "version", " ", "of", " ", "the", " ", 
+     "following"}], ",", 
+    RowBox[{"with", " ", "\"\<Unevaluated\>\"", " ", "everywhere"}], ",", 
+    RowBox[{"may", " ", "be", " ", 
+     RowBox[{"required", "."}]}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"noneAreAtomsQ", "[", "candidates_List", "]"}], ":=", 
+   RowBox[{"And", "@@", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Not", "[", 
+        RowBox[{"AtomQ", "@", "#"}], "]"}], "&"}], "/@", "candidates"}], 
+     ")"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"noneAreAtomsOrListsQ", "[", "candidates_List", "]"}], ":=", 
+  RowBox[{"And", "@@", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"Not", "[", 
+        RowBox[{
+         RowBox[{"AtomQ", "@", "#"}], "||", 
+         RowBox[{"ListQ", "@", "#"}]}], "]"}], ")"}], "&"}], "/@", 
+     "candidates"}], ")"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"allAreRulesQ", "[", "candidates_List", "]"}], ":=", 
+   RowBox[{"And", "@@", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"h", "=", 
+           RowBox[{"Head", "@", "#"}]}], "}"}], ",", 
+         RowBox[{
+          RowBox[{"h", "===", "Rule"}], "||", 
+          RowBox[{"h", "===", "RuleDelayed"}]}]}], "]"}], "&"}], "/@", 
+      "candidates"}], ")"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"fopts", "[", 
+    RowBox[{"fcolor_", ",", "bcolor_"}], "]"}], ":=", 
+   RowBox[{"Sequence", "[", 
+    RowBox[{
+     RowBox[{"Frame", "\[Rule]", "All"}], ",", 
+     RowBox[{"Alignment", "\[Rule]", "Left"}], ",", 
+     RowBox[{"FrameStyle", "\[Rule]", "fcolor"}], ",", 
+     RowBox[{"Background", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"{", 
+        RowBox[{"LightOrange", ",", 
+         RowBox[{"{", "bcolor", "}"}]}], "}"}], "}"}]}]}], "]"}]}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", 
+     RowBox[{"Rule", "[", 
+      RowBox[{"key_", ",", "val_"}], "]"}], "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"gridRules", "@", "key"}], ",", "Bold", ",", "Black"}], 
+          "]"}], ",", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"gridRules", "@", "val"}], ",", "Bold", ",", "Blue"}], 
+          "]"}]}], "}"}], "}"}], ",", 
+      RowBox[{"fopts", "[", 
+       RowBox[{"Blue", ",", "LightYellow"}], "]"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", 
+     RowBox[{"RuleDelayed", "[", 
+      RowBox[{"key_", ",", "val_"}], "]"}], "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"gridRules", "@", "key"}], ",", "Bold", ",", "Black"}], 
+          "]"}], ",", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"gridRules", "@", "val"}], ",", "Bold", ",", "Red"}], 
+          "]"}]}], "}"}], "}"}], ",", 
+      RowBox[{"fopts", "[", 
+       RowBox[{"Red", ",", "LightYellow"}], "]"}]}], "]"}]}], ";"}], "\n", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Put", " ", "lists", " ", "of", " ", "non"}], "-", 
+     RowBox[{
+     "atoms", " ", "vertically", " ", "and", " ", "joinGrids", " ", "them", 
+      " ", "up"}]}], ",", 
+    RowBox[{"removing", " ", "one", " ", "level", " ", "of", " ", 
+     RowBox[{"nesting", "."}]}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", 
+     RowBox[{"exprs_List", "?", "noneAreAtomsOrListsQ"}], "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"joinGrids", "@", 
+        RowBox[{"Transpose", "@", 
+         RowBox[{"{", 
+          RowBox[{"gridRules", "/@", "exprs"}], "}"}]}]}], ")"}], ",", 
+      RowBox[{"Frame", "\[Rule]", "All"}], ",", 
+      RowBox[{"FrameStyle", "\[Rule]", 
+       RowBox[{"Darker", "[", "Green", "]"}]}], ",", 
+      RowBox[{"Alignment", "\[Rule]", "Left"}], ",", 
+      RowBox[{"Background", "\[Rule]", "LightGreen"}]}], "]"}]}], ";"}], "\n", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Put", " ", "other", " ", "lists", " ", "vertically", " ", "but", " ", 
+    RowBox[{"DON", "'"}], "T", " ", "joinGrids", " ", "them", " ", 
+    RowBox[{"up", "."}]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", "exprs_List", "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"Transpose", "@", 
+        RowBox[{"{", 
+         RowBox[{"gridRules", "/@", "exprs"}], "}"}]}], ")"}], ",", 
+      RowBox[{"Frame", "\[Rule]", "All"}], ",", 
+      RowBox[{"FrameStyle", "\[Rule]", 
+       RowBox[{"Darker", "[", "Green", "]"}]}], ",", 
+      RowBox[{"Alignment", "\[Rule]", "Left"}], ",", 
+      RowBox[{"Background", "\[Rule]", "LightGreen"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", 
+     RowBox[{"h_", "[", "parts___", "]"}], "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"gridRules", "@", "h"}], ",", "Bold", ",", 
+           RowBox[{"Darker", "[", "Purple", "]"}]}], "]"}], "}"}], "~", 
+        "Join", "~", 
+        RowBox[{"(", 
+         RowBox[{"gridRules", "/@", 
+          RowBox[{"{", "parts", "}"}]}], ")"}]}], "}"}], ",", 
+      RowBox[{"fopts", "[", 
+       RowBox[{"Black", ",", "LightGreen"}], "]"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", 
+     RowBox[{"any_", "?", "AtomQ"}], "]"}], ":=", 
+    RowBox[{"Style", "[", 
+     RowBox[{
+      RowBox[{"Grid", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", "any", "}"}], "}"}], ",", 
+        RowBox[{"Alignment", "\[Rule]", "Left"}]}], "]"}], ",", "Bold"}], 
+     "]"}]}], ";"}], "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"gridRules", "[", "any_", "]"}], ":=", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"{", "any", "}"}], "}"}], ",", 
+      RowBox[{"Alignment", "\[Rule]", "Left"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", "joinGrids", "]"}], ";"}], "\[IndentingNewLine]", 
+  
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+    "Arbitrarily", " ", "choose", " ", "the", " ", "first", " ", "of", " ", 
+     "multiple", " ", "option", " ", "tails", " ", "z1"}], ",", "z2", ",", 
+    RowBox[{"...", "."}]}], "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], "}"}]}], "}"}], 
+    "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"Grid", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], "}"}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], "}"}], ",", 
+      "k__"}], "}"}], "]"}], ":=", 
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], "}"}], ",", 
+      "k"}], "}"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", "xs___", "]"}], "}"}], "}"}], "]"}], ":=", 
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"Grid", "[", "xs", "]"}], "}"}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Style", "[", 
+        RowBox[{
+         RowBox[{"Grid", "[", 
+          RowBox[{
+           RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], ",", 
+         "sty1___"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Style", "[", 
+        RowBox[{
+         RowBox[{"Grid", "[", 
+          RowBox[{
+           RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], ",", 
+         "sty2___"}], "]"}], "}"}]}], "}"}], "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", "sty1"}],
+       "]"}], "}"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], ",", 
+          "sty1___"}], "]"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], ",", 
+          "sty2___"}], "]"}], "}"}], ",", "k__"}], "}"}], "]"}], ":=", 
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", 
+          "sty1"}], "]"}], "}"}], ",", "k"}], "}"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Style", "[", 
+        RowBox[{
+         RowBox[{"Grid", "[", 
+          RowBox[{
+           RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], ",", 
+         "sty1___"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], "}"}]}], "}"}], 
+    "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", "sty1"}],
+       "]"}], "}"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], ",", 
+          "sty1___"}], "]"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"Grid", "[", 
+         RowBox[{
+          RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], "}"}], ",", 
+       "k__"}], "}"}], "]"}], ":=", 
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", 
+          "sty1"}], "]"}], "}"}], ",", "k"}], "}"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Style", "[", 
+        RowBox[{
+         RowBox[{"Grid", "[", 
+          RowBox[{
+           RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], ",", 
+         "sty2___"}], "]"}], "}"}]}], "}"}], "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", "sty2"}],
+       "]"}], "}"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Grid", "[", 
+         RowBox[{
+          RowBox[{"{", "xs__", "}"}], ",", "z1___"}], "]"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", "ys__", "}"}], ",", "z2___"}], "]"}], ",", 
+          "sty2___"}], "]"}], "}"}], ",", "k__"}], "}"}], "]"}], ":=", 
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Style", "[", 
+         RowBox[{
+          RowBox[{"Grid", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"xs", ",", "ys"}], "}"}], ",", "z1"}], "]"}], ",", 
+          "sty2"}], "]"}], "}"}], ",", "k"}], "}"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"joinGrids", "[", 
+     RowBox[{"{", 
+      RowBox[{"{", 
+       RowBox[{"Style", "[", 
+        RowBox[{
+         RowBox[{"Grid", "[", "xs___", "]"}], ",", "sty___"}], "]"}], "}"}], 
+      "}"}], "]"}], ":=", 
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"Grid", "[", "xs", "]"}], ",", "sty"}], "]"}], "}"}], "}"}]}],
+    ";"}], "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"joinGrids", "[", 
+    RowBox[{"{", "}"}], "]"}], ":=", 
+   RowBox[{"{", "}"}]}], ";"}]}], "Input",
+ InitializationCell->True]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -1848,8 +5785,8 @@ Cell[BoxData[
 AutoGeneratedPackage->None,
 WindowToolbars->{},
 CellGrouping->Automatic,
-WindowSize->{1262, 852},
-WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+WindowSize->{1424, 990},
+WindowMargins->{{Automatic, 0}, {-1, Automatic}},
 PrivateNotebookOptions->{"ColorPalette"->{RGBColor, 128}},
 ShowCellLabel->True,
 ShowCellTags->False,
@@ -1857,10 +5794,9 @@ RenderingOptions->{"ObjectDithering"->True,
 "RasterDithering"->False},
 Magnification:>FEPrivate`If[
   FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.5, 1.5 Inherited],
-FrontEndVersion->"8.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 22, \
-2012)",
+FrontEndVersion->"8.0 for Microsoft Windows (64-bit) (October 6, 2011)",
 StyleDefinitions->FrontEnd`FileName[{"Creative"}, "NaturalColor.nb", 
-  CharacterEncoding -> "UTF-8"]
+  CharacterEncoding -> "WindowsANSI"]
 ]
 (* End of Notebook Content *)
 
@@ -1874,488 +5810,539 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[579, 22, 113, 3, 90, "Title",
+Cell[579, 22, 113, 3, 98, "Title",
  Evaluatable->False],
-Cell[695, 27, 111, 3, 31, "Subsubtitle",
+Cell[695, 27, 111, 3, 35, "Subsubtitle",
  Evaluatable->False],
-Cell[809, 32, 114, 2, 39, "Text",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[948, 38, 223, 5, 55, "Subtitle"],
-Cell[1174, 45, 158, 3, 63, "Text"],
-Cell[CellGroupData[{
-Cell[1357, 52, 74, 2, 108, "Section",
+Cell[809, 32, 114, 2, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[1456, 58, 76, 2, 36, "Subsubsection",
+Cell[948, 38, 223, 5, 58, "Subtitle"],
+Cell[1174, 45, 158, 3, 66, "Text"],
+Cell[CellGroupData[{
+Cell[1357, 52, 74, 2, 113, "Section",
  Evaluatable->False],
-Cell[1535, 62, 88, 2, 39, "Text",
+Cell[CellGroupData[{
+Cell[1456, 58, 76, 2, 39, "Subsubsection",
+ Evaluatable->False],
+Cell[1535, 62, 88, 2, 42, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1660, 69, 77, 2, 36, "Subsubsection",
+Cell[1660, 69, 77, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[1740, 73, 77, 2, 39, "Text",
+Cell[1740, 73, 77, 2, 42, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1854, 80, 78, 2, 36, "Subsubsection",
+Cell[1854, 80, 78, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[1935, 84, 245, 6, 62, "Text",
+Cell[1935, 84, 245, 6, 68, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2217, 95, 86, 2, 36, "Subsubsection",
+Cell[2217, 95, 86, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[2306, 99, 65, 2, 39, "Text",
+Cell[2306, 99, 65, 2, 42, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2408, 106, 80, 2, 36, "Subsubsection",
+Cell[2408, 106, 80, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[2491, 110, 341, 8, 108, "Text",
+Cell[2491, 110, 341, 8, 120, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2869, 123, 32, 0, 36, "Subsubsection"],
-Cell[2904, 125, 132, 5, 39, "Text"],
-Cell[3039, 132, 156, 7, 39, "Text"]
+Cell[2869, 123, 32, 0, 39, "Subsubsection"],
+Cell[2904, 125, 132, 5, 43, "Text"],
+Cell[3039, 132, 156, 7, 43, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[3232, 144, 79, 2, 36, "Subsubsection",
+Cell[3232, 144, 79, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[3314, 148, 290, 6, 62, "Text",
+Cell[3314, 148, 290, 6, 68, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[3641, 159, 77, 2, 36, "Subsubsection",
+Cell[3641, 159, 77, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[3721, 163, 242, 10, 39, "Text",
+Cell[3721, 163, 242, 10, 43, "Text",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[4000, 178, 143, 6, 36, "Subsubsection",
+Cell[4000, 178, 143, 6, 39, "Subsubsection",
  Evaluatable->False],
-Cell[4146, 186, 65, 2, 39, "Text",
+Cell[4146, 186, 65, 2, 42, "Text",
  Evaluatable->False],
-Cell[4214, 190, 360, 12, 63, "Text"]
+Cell[4214, 190, 360, 12, 67, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[4611, 207, 83, 2, 36, "Subsubsection",
+Cell[4611, 207, 83, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[4697, 211, 161, 3, 55, "Input",
+Cell[4697, 211, 161, 3, 58, "Input",
  Evaluatable->False],
-Cell[4861, 216, 531, 12, 86, "Text"],
-Cell[5395, 230, 490, 13, 176, "Text"],
-Cell[5888, 245, 89, 2, 39, "Text",
+Cell[4861, 216, 531, 12, 66, "Text"],
+Cell[5395, 230, 490, 13, 194, "Text"],
+Cell[5888, 245, 89, 2, 42, "Text",
  Evaluatable->False],
-Cell[5980, 249, 131, 2, 55, "Input"],
-Cell[6114, 253, 130, 2, 55, "Input"]
+Cell[5980, 249, 131, 2, 58, "Input"],
+Cell[6114, 253, 130, 2, 58, "Input"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[6293, 261, 70, 2, 108, "Section",
+Cell[6293, 261, 70, 2, 113, "Section",
  Evaluatable->False],
-Cell[6366, 265, 96, 2, 39, "Text"],
+Cell[6366, 265, 96, 2, 42, "Text"],
 Cell[CellGroupData[{
-Cell[6487, 271, 33, 0, 51, "Subsection"],
-Cell[6523, 273, 303, 10, 62, "Text"],
-Cell[6829, 285, 513, 13, 86, "Text"]
+Cell[6487, 271, 33, 0, 54, "Subsection"],
+Cell[6523, 273, 303, 10, 70, "Text"],
+Cell[6829, 285, 513, 13, 94, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[7379, 303, 102, 3, 51, "Subsection",
+Cell[7379, 303, 102, 3, 54, "Subsection",
  Evaluatable->False,
  InitializationCell->True],
-Cell[7484, 308, 348, 11, 62, "Text",
+Cell[7484, 308, 348, 11, 69, "Text",
  Evaluatable->False,
  InitializationCell->True],
-Cell[7835, 321, 106, 2, 55, "Input",
+Cell[7835, 321, 106, 2, 58, "Input",
  InitializationCell->True]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[7990, 329, 80, 2, 108, "Section",
+Cell[7990, 329, 80, 2, 113, "Section",
  Evaluatable->False],
-Cell[8073, 333, 213, 8, 39, "Text",
+Cell[8073, 333, 213, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[8311, 345, 88, 2, 51, "Subsection",
+Cell[8311, 345, 88, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[8402, 349, 161, 5, 94, "Input"]
+Cell[8402, 349, 161, 5, 103, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8600, 359, 81, 2, 51, "Subsection",
+Cell[8600, 359, 81, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[8684, 363, 148, 4, 75, "Input"],
-Cell[8835, 369, 328, 12, 39, "Text",
+Cell[8684, 363, 148, 4, 81, "Input"],
+Cell[8835, 369, 328, 12, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[9188, 385, 85, 1, 55, "Input"],
-Cell[9276, 388, 538, 13, 55, "Output"]
+Cell[9188, 385, 85, 1, 58, "Input"],
+Cell[9276, 388, 538, 13, 57, "Output"]
 }, Open  ]],
-Cell[9829, 404, 295, 12, 39, "Text",
+Cell[9829, 404, 295, 12, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[10149, 420, 90, 1, 55, "Input"],
-Cell[10242, 423, 422, 11, 55, "Output"]
+Cell[10149, 420, 90, 1, 58, "Input"],
+Cell[10242, 423, 422, 11, 57, "Output"]
 }, Open  ]],
-Cell[10679, 437, 215, 8, 39, "Text",
+Cell[10679, 437, 215, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[10919, 449, 86, 1, 55, "Input"],
+Cell[10919, 449, 86, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[11030, 454, 611, 15, 30, "Print"],
-Cell[11644, 471, 717, 18, 30, "Print"],
-Cell[12364, 491, 836, 22, 30, "Print"],
-Cell[13203, 515, 717, 18, 30, "Print"],
-Cell[13923, 535, 611, 15, 30, "Print"]
+Cell[11030, 454, 611, 15, 32, "Print"],
+Cell[11644, 471, 717, 18, 32, "Print"],
+Cell[12364, 491, 836, 22, 32, "Print"],
+Cell[13203, 515, 717, 18, 32, "Print"],
+Cell[13923, 535, 611, 15, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14595, 557, 107, 3, 51, "Subsection",
+Cell[14595, 557, 107, 3, 54, "Subsection",
  Evaluatable->False,
  PageBreakAbove->True],
 Cell[CellGroupData[{
-Cell[14727, 564, 84, 2, 36, "Subsubsection",
+Cell[14727, 564, 84, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[14814, 568, 133, 4, 75, "Input"],
-Cell[14950, 574, 258, 12, 39, "Text",
+Cell[14814, 568, 133, 4, 81, "Input"],
+Cell[14950, 574, 258, 12, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[15233, 590, 78, 1, 55, "Input"],
-Cell[15314, 593, 30, 0, 55, "Output"]
+Cell[15233, 590, 78, 1, 58, "Input"],
+Cell[15314, 593, 30, 0, 57, "Output"]
 }, Open  ]],
-Cell[15359, 596, 266, 9, 39, "Text",
+Cell[15359, 596, 266, 9, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[15650, 609, 79, 1, 55, "Input"],
-Cell[15732, 612, 79, 2, 55, "Output"]
+Cell[15650, 609, 79, 1, 58, "Input"],
+Cell[15732, 612, 79, 2, 57, "Output"]
 }, Open  ]],
-Cell[15826, 617, 156, 5, 39, "Text",
+Cell[15826, 617, 156, 5, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[16007, 626, 82, 1, 55, "Input"],
+Cell[16007, 626, 82, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[16114, 631, 78, 2, 30, "Print"],
-Cell[16195, 635, 78, 2, 30, "Print"],
-Cell[16276, 639, 78, 2, 30, "Print"],
-Cell[16357, 643, 78, 2, 30, "Print"]
-}, Open  ]]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[16496, 652, 86, 2, 36, "Subsubsection",
- Evaluatable->False],
-Cell[16585, 656, 148, 4, 75, "Input"],
-Cell[16736, 662, 109, 2, 39, "Text",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[16870, 668, 83, 1, 55, "Input"],
-Cell[CellGroupData[{
-Cell[16978, 673, 78, 2, 30, "Print"],
-Cell[17059, 677, 78, 2, 30, "Print"],
-Cell[17140, 681, 78, 2, 30, "Print"]
+Cell[16114, 631, 78, 2, 32, "Print"],
+Cell[16195, 635, 78, 2, 32, "Print"],
+Cell[16276, 639, 78, 2, 32, "Print"],
+Cell[16357, 643, 78, 2, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17279, 690, 107, 2, 36, "Subsubsection",
+Cell[16496, 652, 86, 2, 39, "Subsubsection",
  Evaluatable->False],
-Cell[17389, 694, 240, 6, 62, "Text",
+Cell[16585, 656, 148, 4, 81, "Input"],
+Cell[16736, 662, 109, 2, 42, "Text",
  Evaluatable->False],
-Cell[17632, 702, 142, 4, 75, "Input"]
+Cell[CellGroupData[{
+Cell[16870, 668, 83, 1, 58, "Input"],
+Cell[CellGroupData[{
+Cell[16978, 673, 78, 2, 32, "Print"],
+Cell[17059, 677, 78, 2, 32, "Print"],
+Cell[17140, 681, 78, 2, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17835, 713, 113, 3, 108, "Section",
+Cell[17279, 690, 107, 2, 39, "Subsubsection",
+ Evaluatable->False],
+Cell[17389, 694, 240, 6, 68, "Text",
+ Evaluatable->False],
+Cell[17632, 702, 142, 4, 81, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17835, 713, 113, 3, 113, "Section",
  Evaluatable->False,
  PageBreakAbove->True],
-Cell[17951, 718, 211, 8, 39, "Text",
+Cell[17951, 718, 211, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[18187, 730, 88, 2, 51, "Subsection",
+Cell[18187, 730, 88, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[18278, 734, 116, 2, 39, "Text",
+Cell[18278, 734, 116, 2, 42, "Text",
  Evaluatable->False],
-Cell[18397, 738, 243, 7, 133, "Input"]
+Cell[18397, 738, 243, 7, 148, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18677, 750, 89, 2, 51, "Subsection",
+Cell[18677, 750, 89, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[18769, 754, 264, 12, 231, "Input"],
-Cell[19036, 768, 390, 16, 51, "Text",
+Cell[18769, 754, 264, 12, 261, "Input"],
+Cell[19036, 768, 390, 16, 54, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[19451, 788, 80, 1, 55, "Input"],
-Cell[19534, 791, 30, 0, 55, "Output"]
+Cell[19451, 788, 80, 1, 58, "Input"],
+Cell[19534, 791, 30, 0, 57, "Output"]
 }, Open  ]],
-Cell[19579, 794, 205, 8, 39, "Text",
+Cell[19579, 794, 205, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[19809, 806, 77, 1, 55, "Input"],
+Cell[19809, 806, 77, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[19911, 811, 79, 2, 30, "Print"],
-Cell[19993, 815, 79, 2, 30, "Print"]
+Cell[19911, 811, 79, 2, 32, "Print"],
+Cell[19993, 815, 79, 2, 32, "Print"]
 }, Open  ]]
 }, Open  ]],
-Cell[20099, 821, 352, 13, 51, "Text",
+Cell[20099, 821, 352, 13, 54, "Text",
  Evaluatable->False,
  PageBreakBelow->False],
 Cell[CellGroupData[{
-Cell[20476, 838, 86, 1, 55, "Input"],
+Cell[20476, 838, 86, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[20587, 843, 175, 5, 30, "Print"],
-Cell[20765, 850, 175, 5, 30, "Print"]
+Cell[20587, 843, 175, 5, 32, "Print"],
+Cell[20765, 850, 175, 5, 32, "Print"]
 }, Open  ]]
 }, Open  ]],
-Cell[20967, 859, 144, 4, 39, "Text",
+Cell[20967, 859, 144, 4, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[21136, 867, 98, 1, 55, "Input"],
+Cell[21136, 867, 98, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[21259, 872, 474, 11, 30, "Print"],
-Cell[21736, 885, 474, 11, 30, "Print"]
+Cell[21259, 872, 474, 11, 32, "Print"],
+Cell[21736, 885, 474, 11, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[22283, 904, 99, 2, 108, "Section",
+Cell[22283, 904, 99, 2, 113, "Section",
  Evaluatable->False],
-Cell[22385, 908, 211, 8, 39, "Text",
+Cell[22385, 908, 211, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[22621, 920, 85, 2, 51, "Subsection",
+Cell[22621, 920, 85, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[22709, 924, 115, 2, 39, "Text",
+Cell[22709, 924, 115, 2, 42, "Text",
  Evaluatable->False],
-Cell[22827, 928, 101, 1, 55, "Input"],
-Cell[22931, 931, 92, 2, 39, "Text",
+Cell[22827, 928, 101, 1, 58, "Input"],
+Cell[22931, 931, 92, 2, 42, "Text",
  Evaluatable->False],
-Cell[23026, 935, 71, 2, 39, "Text",
+Cell[23026, 935, 71, 2, 42, "Text",
  Evaluatable->False],
-Cell[23100, 939, 95, 1, 55, "Input"],
-Cell[23198, 942, 71, 2, 39, "Text",
+Cell[23100, 939, 95, 1, 58, "Input"],
+Cell[23198, 942, 71, 2, 42, "Text",
  Evaluatable->False],
-Cell[23272, 946, 137, 4, 75, "Input"],
-Cell[23412, 952, 101, 2, 39, "Text",
+Cell[23272, 946, 137, 4, 81, "Input"],
+Cell[23412, 952, 101, 2, 42, "Text",
  Evaluatable->False],
-Cell[23516, 956, 226, 6, 114, "Input"],
-Cell[23745, 964, 84, 2, 39, "Text",
+Cell[23516, 956, 226, 6, 126, "Input"],
+Cell[23745, 964, 84, 2, 42, "Text",
  Evaluatable->False],
-Cell[23832, 968, 168, 4, 75, "Input"]
+Cell[23832, 968, 168, 4, 81, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[24037, 977, 80, 2, 51, "Subsection",
+Cell[24037, 977, 80, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[24120, 981, 135, 4, 39, "Text",
+Cell[24120, 981, 135, 4, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[24280, 989, 87, 1, 55, "Input"],
-Cell[24370, 992, 394, 11, 55, "Output"]
+Cell[24280, 989, 87, 1, 58, "Input"],
+Cell[24370, 992, 394, 11, 57, "Output"]
 }, Open  ]],
-Cell[24779, 1006, 244, 8, 39, "Text",
+Cell[24779, 1006, 244, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[25048, 1018, 78, 1, 55, "Input"],
+Cell[25048, 1018, 78, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[25151, 1023, 360, 11, 30, "Print"],
-Cell[25514, 1036, 360, 11, 30, "Print"],
-Cell[25877, 1049, 490, 15, 30, "Print"]
+Cell[25151, 1023, 360, 11, 32, "Print"],
+Cell[25514, 1036, 360, 11, 32, "Print"],
+Cell[25877, 1049, 490, 15, 32, "Print"]
 }, Open  ]]
 }, Open  ]],
-Cell[26394, 1068, 269, 12, 39, "Text",
+Cell[26394, 1068, 269, 12, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[26688, 1084, 80, 1, 55, "Input"],
-Cell[26771, 1087, 136, 4, 55, "Output"]
+Cell[26688, 1084, 80, 1, 58, "Input"],
+Cell[26771, 1087, 136, 4, 57, "Output"]
 }, Open  ]],
-Cell[26922, 1094, 287, 9, 62, "Text",
+Cell[26922, 1094, 287, 9, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[27234, 1107, 92, 1, 55, "Input"],
+Cell[27234, 1107, 92, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[27351, 1112, 135, 4, 30, "Print"],
-Cell[27489, 1118, 135, 4, 30, "Print"],
-Cell[27627, 1124, 135, 4, 30, "Print"]
+Cell[27351, 1112, 135, 4, 32, "Print"],
+Cell[27489, 1118, 135, 4, 32, "Print"],
+Cell[27627, 1124, 135, 4, 32, "Print"]
 }, Open  ]]
 }, Open  ]],
-Cell[27789, 1132, 420, 14, 62, "Text",
+Cell[27789, 1132, 420, 14, 70, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[28234, 1150, 68, 1, 55, "Input"],
-Cell[28305, 1153, 29, 0, 55, "Output"]
+Cell[28234, 1150, 68, 1, 58, "Input"],
+Cell[28305, 1153, 29, 0, 57, "Output"]
 }, Open  ]],
-Cell[28349, 1156, 209, 8, 39, "Text",
+Cell[28349, 1156, 209, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[28583, 1168, 67, 1, 55, "Input"],
-Cell[28653, 1171, 136, 4, 55, "Output"]
+Cell[28583, 1168, 67, 1, 58, "Input"],
+Cell[28653, 1171, 136, 4, 57, "Output"]
 }, Open  ]],
-Cell[28804, 1178, 361, 15, 39, "Text",
+Cell[28804, 1178, 361, 15, 43, "Text",
  Evaluatable->False,
  PageBreakBelow->False],
 Cell[CellGroupData[{
-Cell[29190, 1197, 70, 1, 55, "Input"],
-Cell[29263, 1200, 29, 0, 55, "Output"]
+Cell[29190, 1197, 70, 1, 58, "Input"],
+Cell[29263, 1200, 29, 0, 57, "Output"]
 }, Open  ]],
-Cell[29307, 1203, 232, 9, 39, "Text",
+Cell[29307, 1203, 232, 9, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[29564, 1216, 130, 5, 94, "Input"],
-Cell[29697, 1223, 861, 25, 55, "Output"]
+Cell[29564, 1216, 130, 5, 103, "Input"],
+Cell[29697, 1223, 861, 25, 57, "Output"]
 }, Open  ]],
-Cell[30573, 1251, 115, 2, 39, "Text",
+Cell[30573, 1251, 115, 2, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[30713, 1257, 71, 1, 55, "Input"],
-Cell[30787, 1260, 29, 0, 55, "Output"]
+Cell[30713, 1257, 71, 1, 58, "Input"],
+Cell[30787, 1260, 29, 0, 57, "Output"]
 }, Open  ]],
-Cell[30831, 1263, 346, 10, 62, "Text",
+Cell[30831, 1263, 346, 10, 69, "Text",
  Evaluatable->False],
-Cell[CellGroupData[{
-Cell[31202, 1277, 150, 2, 55, "Input"],
-Cell[31355, 1281, 198, 6, 55, "Output"]
-}, Open  ]]
+Cell[31180, 1275, 451, 8, 117, "Text"],
+Cell[31634, 1285, 88, 1, 58, "Input"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[31614, 1294, 80, 2, 108, "Section",
+Cell[31771, 1292, 80, 2, 113, "Section",
  Evaluatable->False],
-Cell[31697, 1298, 106, 2, 39, "Text",
+Cell[31854, 1296, 106, 2, 42, "Text",
  Evaluatable->False],
-Cell[31806, 1302, 73, 1, 55, "Input"],
-Cell[31882, 1305, 80, 2, 39, "Text",
+Cell[31963, 1300, 73, 1, 58, "Input"],
+Cell[32039, 1303, 80, 2, 42, "Text",
  Evaluatable->False],
-Cell[31965, 1309, 65, 1, 55, "Input"],
-Cell[32033, 1312, 88, 2, 39, "Text",
+Cell[32122, 1307, 65, 1, 58, "Input"],
+Cell[32190, 1310, 88, 2, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[32146, 1318, 69, 1, 55, "Input"],
-Cell[32218, 1321, 30, 0, 55, "Output"]
+Cell[32303, 1316, 69, 1, 58, "Input"],
+Cell[32375, 1319, 30, 0, 57, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[32297, 1327, 116, 3, 108, "Section",
+Cell[32454, 1325, 116, 3, 113, "Section",
  Evaluatable->False,
  PageBreakAbove->True],
-Cell[32416, 1332, 220, 8, 39, "Text",
+Cell[32573, 1330, 220, 8, 43, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[32661, 1344, 80, 2, 51, "Subsection",
+Cell[32818, 1342, 80, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[32744, 1348, 78, 2, 39, "Text",
+Cell[32901, 1346, 78, 2, 42, "Text",
  Evaluatable->False],
-Cell[32825, 1352, 145, 5, 94, "Input"],
-Cell[32973, 1359, 114, 5, 94, "Input"],
-Cell[33090, 1366, 98, 2, 39, "Text",
+Cell[32982, 1350, 145, 5, 103, "Input"],
+Cell[33130, 1357, 114, 5, 103, "Input"],
+Cell[33247, 1364, 98, 2, 42, "Text",
  Evaluatable->False],
-Cell[33191, 1370, 200, 7, 133, "Input"],
-Cell[33394, 1379, 110, 4, 75, "Input"],
-Cell[33507, 1385, 73, 2, 39, "Text",
+Cell[33348, 1368, 200, 7, 148, "Input"],
+Cell[33551, 1377, 110, 4, 81, "Input"],
+Cell[33664, 1383, 73, 2, 42, "Text",
  Evaluatable->False],
-Cell[33583, 1389, 135, 6, 114, "Input"],
-Cell[33721, 1397, 76, 2, 39, "Text",
+Cell[33740, 1387, 135, 6, 126, "Input"],
+Cell[33878, 1395, 76, 2, 42, "Text",
  Evaluatable->False],
-Cell[33800, 1401, 112, 4, 75, "Input"],
-Cell[33915, 1407, 76, 2, 39, "Text",
+Cell[33957, 1399, 112, 4, 81, "Input"],
+Cell[34072, 1405, 76, 2, 42, "Text",
  Evaluatable->False],
-Cell[33994, 1411, 159, 4, 75, "Input"]
+Cell[34151, 1409, 159, 4, 81, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[34190, 1420, 82, 2, 51, "Subsection",
+Cell[34347, 1418, 82, 2, 54, "Subsection",
  Evaluatable->False],
-Cell[34275, 1424, 93, 2, 39, "Text",
+Cell[34432, 1422, 93, 2, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[34393, 1430, 71, 1, 55, "Input"],
-Cell[34467, 1433, 29, 0, 55, "Output"]
+Cell[34550, 1428, 71, 1, 58, "Input"],
+Cell[34624, 1431, 29, 0, 57, "Output"]
 }, Open  ]],
-Cell[34511, 1436, 86, 2, 39, "Text",
+Cell[34668, 1434, 86, 2, 42, "Text",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[34622, 1442, 75, 1, 55, "Input"],
+Cell[34779, 1440, 75, 1, 58, "Input"],
 Cell[CellGroupData[{
-Cell[34722, 1447, 80, 2, 30, "Print"],
-Cell[34805, 1451, 81, 2, 30, "Print"],
-Cell[34889, 1455, 89, 2, 30, "Print"],
-Cell[34981, 1459, 82, 2, 30, "Print"],
-Cell[35066, 1463, 80, 2, 30, "Print"],
-Cell[35149, 1467, 80, 2, 30, "Print"]
-}, Open  ]]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[35290, 1476, 103, 2, 51, "Subsection",
- Evaluatable->False],
-Cell[35396, 1480, 176, 5, 39, "Text",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[35597, 1489, 76, 1, 55, "Input"],
-Cell[35676, 1492, 29, 0, 55, "Output"]
-}, Open  ]],
-Cell[35720, 1495, 207, 5, 39, "Text",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[35952, 1504, 99, 1, 55, "Input"],
-Cell[36054, 1507, 29, 0, 55, "Output"]
+Cell[34879, 1445, 80, 2, 32, "Print"],
+Cell[34962, 1449, 81, 2, 32, "Print"],
+Cell[35046, 1453, 89, 2, 32, "Print"],
+Cell[35138, 1457, 82, 2, 32, "Print"],
+Cell[35223, 1461, 80, 2, 32, "Print"],
+Cell[35306, 1465, 80, 2, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[36144, 1514, 127, 1, 108, "Section"],
+Cell[35447, 1474, 103, 2, 54, "Subsection",
+ Evaluatable->False],
+Cell[35553, 1478, 176, 5, 42, "Text",
+ Evaluatable->False],
 Cell[CellGroupData[{
-Cell[36296, 1519, 99, 1, 51, "Subsection"],
-Cell[36398, 1522, 208, 6, 39, "Text"],
-Cell[36609, 1530, 3109, 95, 585, "Input"],
+Cell[35754, 1487, 76, 1, 58, "Input"],
+Cell[35833, 1490, 29, 0, 57, "Output"]
+}, Open  ]],
+Cell[35877, 1493, 207, 5, 42, "Text",
+ Evaluatable->False],
 Cell[CellGroupData[{
-Cell[39743, 1629, 238, 5, 57, "Input"],
-Cell[CellGroupData[{
-Cell[40006, 1638, 143, 4, 30, "Print"],
-Cell[40152, 1644, 139, 4, 30, "Print"],
-Cell[40294, 1650, 143, 4, 30, "Print"],
-Cell[40440, 1656, 143, 4, 30, "Print"],
-Cell[40586, 1662, 143, 4, 30, "Print"],
-Cell[40732, 1668, 145, 4, 30, "Print"],
-Cell[40880, 1674, 146, 4, 30, "Print"],
-Cell[41029, 1680, 144, 4, 30, "Print"],
-Cell[41176, 1686, 144, 4, 30, "Print"],
-Cell[41323, 1692, 139, 4, 30, "Print"],
-Cell[41465, 1698, 141, 4, 30, "Print"],
-Cell[41609, 1704, 140, 4, 30, "Print"],
-Cell[41752, 1710, 143, 4, 30, "Print"],
-Cell[41898, 1716, 140, 4, 30, "Print"],
-Cell[42041, 1722, 144, 4, 30, "Print"],
-Cell[42188, 1728, 141, 4, 30, "Print"],
-Cell[42332, 1734, 139, 4, 30, "Print"],
-Cell[42474, 1740, 142, 4, 30, "Print"],
-Cell[42619, 1746, 139, 4, 30, "Print"],
-Cell[42761, 1752, 142, 4, 30, "Print"],
-Cell[42906, 1758, 139, 4, 30, "Print"],
-Cell[43048, 1764, 139, 4, 30, "Print"],
-Cell[43190, 1770, 138, 4, 30, "Print"]
+Cell[36109, 1502, 99, 1, 58, "Input"],
+Cell[36211, 1505, 29, 0, 57, "Output"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[43355, 1778, 356, 8, 57, "Input"],
 Cell[CellGroupData[{
-Cell[43736, 1790, 178, 3, 57, "Input"],
+Cell[36301, 1512, 127, 1, 113, "Section"],
 Cell[CellGroupData[{
-Cell[43939, 1797, 88, 2, 30, "Print"],
-Cell[44030, 1801, 89, 2, 30, "Print"],
-Cell[44122, 1805, 90, 2, 30, "Print"],
-Cell[44215, 1809, 91, 2, 30, "Print"],
-Cell[44309, 1813, 92, 2, 30, "Print"],
-Cell[44404, 1817, 90, 2, 30, "Print"],
-Cell[44497, 1821, 91, 2, 30, "Print"],
-Cell[44591, 1825, 86, 2, 30, "Print"],
-Cell[44680, 1829, 87, 2, 30, "Print"],
-Cell[44770, 1833, 86, 2, 30, "Print"],
-Cell[44859, 1837, 84, 2, 30, "Print"]
+Cell[36453, 1517, 99, 1, 54, "Subsection"],
+Cell[36555, 1520, 208, 6, 43, "Text"],
+Cell[36766, 1528, 3109, 95, 680, "Input"],
+Cell[CellGroupData[{
+Cell[39900, 1627, 238, 5, 58, "Input"],
+Cell[CellGroupData[{
+Cell[40163, 1636, 143, 4, 32, "Print"],
+Cell[40309, 1642, 139, 4, 32, "Print"],
+Cell[40451, 1648, 143, 4, 32, "Print"],
+Cell[40597, 1654, 143, 4, 32, "Print"],
+Cell[40743, 1660, 143, 4, 32, "Print"],
+Cell[40889, 1666, 145, 4, 32, "Print"],
+Cell[41037, 1672, 146, 4, 32, "Print"],
+Cell[41186, 1678, 144, 4, 32, "Print"],
+Cell[41333, 1684, 144, 4, 32, "Print"],
+Cell[41480, 1690, 139, 4, 32, "Print"],
+Cell[41622, 1696, 141, 4, 32, "Print"],
+Cell[41766, 1702, 140, 4, 32, "Print"],
+Cell[41909, 1708, 143, 4, 32, "Print"],
+Cell[42055, 1714, 140, 4, 32, "Print"],
+Cell[42198, 1720, 144, 4, 32, "Print"],
+Cell[42345, 1726, 141, 4, 32, "Print"],
+Cell[42489, 1732, 139, 4, 32, "Print"],
+Cell[42631, 1738, 142, 4, 32, "Print"],
+Cell[42776, 1744, 139, 4, 32, "Print"],
+Cell[42918, 1750, 142, 4, 32, "Print"],
+Cell[43063, 1756, 139, 4, 32, "Print"],
+Cell[43205, 1762, 139, 4, 32, "Print"],
+Cell[43347, 1768, 138, 4, 32, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[43512, 1776, 627, 19, 167, "Input"],
+Cell[44142, 1797, 350, 8, 58, "Input"],
+Cell[CellGroupData[{
+Cell[44517, 1809, 178, 3, 58, "Input"],
+Cell[CellGroupData[{
+Cell[44720, 1816, 89, 2, 32, "Print"],
+Cell[44812, 1820, 90, 2, 32, "Print"],
+Cell[44905, 1824, 91, 2, 32, "Print"],
+Cell[44999, 1828, 92, 2, 32, "Print"],
+Cell[45094, 1832, 90, 2, 32, "Print"],
+Cell[45187, 1836, 91, 2, 32, "Print"],
+Cell[45281, 1840, 86, 2, 32, "Print"],
+Cell[45370, 1844, 87, 2, 32, "Print"],
+Cell[45460, 1848, 86, 2, 32, "Print"],
+Cell[45549, 1852, 84, 2, 32, "Print"]
 }, Open  ]]
 }, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45694, 1861, 65, 2, 54, "Subsection"],
+Cell[45762, 1865, 548, 10, 94, "Text"],
+Cell[CellGroupData[{
+Cell[46335, 1879, 129, 3, 58, "Input"],
+Cell[46467, 1884, 155, 4, 57, "Output"]
+}, Open  ]],
+Cell[46637, 1891, 216, 4, 68, "Text"],
+Cell[46856, 1897, 785, 17, 248, "Input"],
+Cell[CellGroupData[{
+Cell[47666, 1918, 187, 5, 58, "Input"],
+Cell[47856, 1925, 3355, 94, 233, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[51248, 2024, 89, 2, 58, "Input"],
+Cell[51340, 2028, 89875, 2495, 1792, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[141252, 4528, 231, 7, 58, "Input"],
+Cell[141486, 4537, 12408, 345, 304, "Output"]
+}, Open  ]],
+Cell[153909, 4885, 311, 10, 43, "Text"],
+Cell[154223, 4897, 81, 2, 58, "Input"],
+Cell[CellGroupData[{
+Cell[154329, 4903, 225, 8, 58, "Input"],
+Cell[154557, 4913, 1641, 46, 133, "Output"]
+}, Open  ]],
+Cell[156213, 4962, 89, 2, 42, "Text"],
+Cell[CellGroupData[{
+Cell[156327, 4968, 278, 10, 58, "Input"],
+Cell[156608, 4980, 1641, 46, 133, "Output"]
+}, Open  ]],
+Cell[158264, 5029, 205, 5, 43, "Text"],
+Cell[158472, 5036, 190, 5, 58, "Input"],
+Cell[CellGroupData[{
+Cell[158687, 5045, 57, 1, 58, "Input"],
+Cell[158747, 5048, 3355, 94, 233, "Output"]
+}, Open  ]],
+Cell[162117, 5145, 85, 2, 58, "Input"],
+Cell[CellGroupData[{
+Cell[162227, 5151, 1143, 32, 221, "Input"],
+Cell[163373, 5185, 1496, 42, 133, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[164906, 5232, 1011, 29, 167, "Input"],
+Cell[165920, 5263, 1496, 42, 133, "Output"]
 }, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[167477, 5312, 59, 2, 113, "Section"],
+Cell[167539, 5316, 14504, 463, 1490, "Input",
+ InitializationCell->True]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
