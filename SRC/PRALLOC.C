@@ -14,7 +14,7 @@
 * as pairs take up a lot of room.
 */
 /* define STATISTICS used to see how much each structure takes */
-#define DEFAULTSIZE 32000 	/* default memory zone size 	*/
+#define DEFAULTSIZE 32000 * 1024 	/* default memory zone size 	*/
 #define BUFFSIZE 1000		/* io buffer sizes		*/
 
 /* error messages */

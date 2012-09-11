@@ -1,21 +1,43 @@
 # Compiled Object files
+
 *.slo
+
 *.lo
+
 *.o
 
+
+
 # Compiled Dynamic libraries
+
 *.so
 
+
+
 # Compiled Static libraries
+
 *.lai
+
 *.la
+
 *.a
 
+
+
 # Operating-system junk files
+
 .DS_Store
 
+
+
 # Visual-Studio junk files
+
 VISUALSTUDIO/_ReSharper*.*
+
+VISUALSTUDIO/Release
 VISUALSTUDIO/Debug
-VISUALSTUDIO/*.sdf
+
+VISUALSTUDIO/*.*sdf*
+
+VISUALSTUDIO/*.suo
 VISUALSTUDIO/ipch
