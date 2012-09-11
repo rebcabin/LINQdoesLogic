@@ -38,29 +38,24 @@ void Main()
     
     Console.WriteLine ("Create a hash set for more efficient testing.");
     Console.WriteLine ("One way is to iterate over the original IEnumerable with a boolean transform");
-    Console.WriteLine ("that inserts the element by side effect");
+    Console.WriteLine ("that inserts the element by side effect and counts the number of unique words");
     sw.Reset(); sw.Start();
     var wordsHashSet = new HashSet<string>();
     words
-        .Select(w => wordsHashSet.Add(w))
+        // automatically skips duplicate words -- turns out that the
+        // famous MOBY word list "single.txt" actually contains a 
+        // duplicate -- "animate", which threw off the count by 1.
+        // That mistake has certainly been in the data set for years.
+        // The following technique, taking advantage of HashSet's
+        // "Add" method, as opposed to ICollection's "Add" method,
+        // sidesteps the error. To find the duplicate, simply negate
+        // the condition in the "Where" call below.
+        .Where(w => wordsHashSet.Add(w))
         .Count()
-        .Dump("Count of words in the hash set")
+        .Dump("Count of unique words in the hash set")
         ;
     sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to build and enumerate the hash set by transformation");
 
-    Console.WriteLine ("Another way is to Fold (or Aggregate) a streaming insertion operator that");
-    Console.WriteLine ("takes an ICollection and an item and returns an ICollection; this is a bit");
-    Console.WriteLine ("slower than the transformation method but it is a composable one-liner, since");
-    Console.WriteLine ("the result is the collection itself, which can be passed down to later transforms.");
-    wordsHashSet = new HashSet<string>();
-    sw.Reset(); sw.Start();
-    words
-        .Aggregate(wordsHashSet, (hs, s) => (HashSet<string>)hs.AddTo(s))
-        .Count()
-        .Dump("Count of words in the hash set")
-        ;
-    sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to build and enumerate the hash set by aggregation");
-    
     sw.Reset(); sw.Start();
     wordsHashSet
         .Contains("prehistorically")
@@ -75,6 +70,20 @@ void Main()
         ;
     sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to decide whether the hash set contains \"zzzzzzzz\"");
 
+    Console.WriteLine ("Another way is to Fold (or Aggregate) a streaming insertion operator that");
+    Console.WriteLine ("takes an ICollection and an item and returns an ICollection; this is a bit");
+    Console.WriteLine ("slower than the transformation method but it is a composable one-liner, since");
+    Console.WriteLine ("the result is the collection itself, which can be passed down to later transforms");
+    Console.WriteLine ("or dynamically composed in reconfigurable pipeline architectures");
+    wordsHashSet = new HashSet<string>();
+    sw.Reset(); sw.Start();
+    words
+        .Aggregate(wordsHashSet, (hs, s) => (HashSet<string>)hs.AddTo(s))
+        .Count()
+        .Dump("Count of words in the hash set")
+        ;
+    sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to build and enumerate the hash set by aggregation");
+    
     var wordsHashSetAsIEnumerable = default(IEnumerable<string>);
     wordsHashSetAsIEnumerable = wordsHashSet;
 
@@ -126,7 +135,6 @@ void Main()
     sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to test 1000 samples WITH the hash set");
 }
 
-
 public static class Extensions
 {
     private static Random random = new Random();
@@ -144,4 +152,3 @@ public static class Extensions
         return target;
     }
 }
-
