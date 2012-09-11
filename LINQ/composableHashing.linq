@@ -24,8 +24,8 @@ void Main()
     /**/
     
     new [] { new {
-            aWords = words.ToArray(), 
-            hWords = words.ToHashSet()
+            aWords = words.ToArray(), // comment out ToArray to go slower
+            hWords = words.ToHashSet() // comment out ToHashSet to go MUCH slower
         }   }
         .Select(o => new {
             hWords = o.hWords,
