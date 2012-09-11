@@ -1,0 +1,52 @@
+Here is the secret of Prolog: it converts proofs of conjunctions into disproofs of disjunctions. Instead of trying to prove every statement in a bunch connected by "and's," it tries to disprove just one statement in a bunch connected by "or's." This can give us, in Logical LINQ, a time-saving "quick exit" computation in some cases, but there are some logical subtleties to consider. Here we go with a bit of analysis that is more philosophical than computational:
+
+Here's our running example of a Prolog rule, just rendered in English:
+<p style="padding-left:30px;">A material can float on water if its specific density is less than unity and if it's not soluble in water.</p>
+Let's give each proposition in the rule a short, symbolic name:
+<p style="padding-left:30px;">F:(A material can Float on water) if L:(its specific density is Less than unity) and S:(if it's not Soluble in water).</p>
+and contract the rule into a short, symbolic form
+<p style="padding-left:30px;">F if L &amp;&amp; S</p>
+We can examine the logical structure of this short form without distraction from its interpretation in the world of floating materials. Its operational meaning is "to prove F, prove L and prove S." Logically, if we don't know that both L and S are true, or even if we know that one or both are false, then we can't prove F, at least according to this isolated rule. Only if we know that both L and S are true do we know that F is true, otherwise we don't know, again, according to this one isolated rule.
+
+It follows, then that "if we <em>disprove</em> L, or <em>disprove</em> S, or show that either one cannot be proved from the facts on hand, then we know that we can't prove F from this rule and Prolog can say 'no' right away." For example, if we prove that a material's density is not less than unity, or we don't have any data on that material's density, or if we prove that the material is soluble, or if we don't have any data on its solubility, then we know we can't prove that the material floats.
+
+Before you cry foul, let me examine the obvious case: we prove that the density of material X is greater than or equal to unity (we disprove L) but we also happen to prove that material X is not soluble (we prove S). I just said that after disproving L we can jump out and declare that <em>we can't prove</em> F, but you might object that, we jumped the gun and in fact, we missed the chance to disprove F.
+
+First, I must narrow down your objection by dismissing any reference to the level of real-world interpretation: that's the wrong level. Of course it's true that dense, non-soluble materials don't float -- boats etc. notwithstanding. But that is not the rule we encoded in Prolog. The rule we encoded only addressed the proof of floating. Formally speaking, we have no way of disproving F from the rules and data at hand.
+
+There is another level, though, on which your objection has merit, and that's the level of the "<a href="http://en.wikipedia.org/wiki/Closed_world_assumption" target="_blank">closed-world assumption</a>." Under this assumption, our data and rules are a complete description of the domain of discourse and, therefore, failure to prove is proof of falsehood. Under this assumption, our Prolog query
+<p style="padding-left:30px;">F if L &amp;&amp; S</p>
+should be read as
+<p style="padding-left:30px;">F if and only if L &amp;&amp; S</p>
+This is an intermediate level of interpretation: not at the real-world level dismissed above, and not at Prolog's mechanical level of scanning lists of facts, but at the level of what we think when Prolog says "no." When we are contemplating the results of a Prolog query, we are free to use or not use the closed-world assumption, and our conclusion of whether Prolog disproved our query statement or merely failed to prove it depends on that assumption. So, we must thoroughly understand how Prolog decides 'no' and what it might mean with and without the closed-world assumption.
+
+Our example query actually has the following form at the finest level of detail, moving closer to the Mathematica notation:
+<p style="padding-left:30px;">F[<em>m</em>] if D[<em>m</em>, <em>d</em>] &amp;&amp; L[<em>d</em>] &amp;&amp; S[<em>m</em>]</p>
+where
+<p style="padding-left:30px;">F[<em>m</em>] = material <em>m</em> can float on water</p>
+<p style="padding-left:30px;">D[<em>m</em>, <em>d</em>] = we have a record in the fact base of <em>m</em>'s specific density <em>d</em></p>
+<p style="padding-left:30px;">L[<em>d</em>] = we do a computation proving that specific density <em>d</em> is less than unity</p>
+<p style="padding-left:30px;">S[<em>m</em>] = we have a record in the fact base that material <em>m</em> is not soluble in water</p>
+Prolog will say 'no' if any of D[<em>m</em>, <em>d</em>], L[<em>d</em>], S[<em>m</em>] fail (that's the quick-exit optimization and the subject of this chapter). What does this mean, with and without the closed-world assumption?
+
+D[<em>m</em>, <em>d</em>] will fail if there is no record for material <em>m</em> in the fact base. Now, it's notable that under the closed-world assumption <em>and</em> in the presence of the next term L[<em>d</em>], we don't actually need to put any records in the fact base for overdense materials. So long as we have a record for every conceivable material with density less than unity, the combination D &amp;&amp; L will robustly fail due to mere absence of a record for all materials with density greater than or equal to unity. But to the extent that we'd like D and L independent, D[<em>m</em>, <em>d</em>] <em>cannot</em> fail under the closed-world assumption unless we didn't put the density <em>d</em> of material <em>m</em> in the fact base. Failure of D generates a bug report.
+
+Without the closed-world assumption, failure of D means that we don't know the density of material <em>m</em>; failure of D means failure to prove F; we don't know whether the material can float, and all is consistent. So much for D; on to L.
+
+L[<em>d</em>] will fail if <em>d </em>is greater than or equal to unity. L is one of a class of terms for which the closed-world assumption is automatically valid. Any number <em>d</em> must be either less than 1 or not less than 1, so failure to prove L[<em>d</em>] is, in fact, always a proof that L[<em>d</em>] is false. Even if we don't take the closed-world assumption for other parts of the query or for the query as a whole, it's always valid for L[<em>d</em>]. With or without the closed-world approximation, our interpretation of failure of L is the same: it's proof that the material is overdense.
+
+Independent failure of L forces immediate failure of F, but does it mean failure to prove floating or proof of failure to float? We would like to say, based on general theory, that under the closed-world assumption, failure of L constitutes disproof of F. Checking against our real-world interpretation, it does: the material won't float whether it's soluble or not, so looks like we're OK, although we might feel queasy that we checked against the formerly forbidden real-world interpretation.
+
+Without the closed-world assumption, we'd like to say that failure of L means failure to prove F, and this interpretation is always available. If you tell me that you disproved F, I don't contradict you by saying that I'm not sure I believe you. I just accept that I think F might be false and it might be true. Put another way, the truth of (not F) implies the truth of (F or not F) by <a href="http://en.wikipedia.org/wiki/Disjunction_introduction" target="_blank">disjunction introduction</a>. So much for L; now finally to S.
+
+S[<em>m</em>] will fail if we don't have a record that <em>m</em> is not soluble. Here the closed-world assumption makes all the difference. Under this assumption, we have complete data and the absence of a record for S[<em>m</em>] proves that <em>m</em> is soluble. Failure of S[<em>m</em>] means disproof of F[<em>m</em>] -- <em>m</em> does not float because it's soluble. Without the closed-world assumption, failure of S and therefore of F means that we don't know.
+
+The complete analysis of this example shows that when Prolog says 'no,' under the closed-world assumption, we can conclude that the material does not float, and without the closed-world assumption, we can only conclude the more modest statement that Prolog can't prove that the material floats.
+
+Let's finish with a symbolic rewrite of the conjunction that we may be able to exploit in our Logical LINQ going forward:
+
+Using the <a href="http://en.wikipedia.org/wiki/Material_conditional" target="_blank">material-conditional</a> definition of "if" (though see <a href="http://en.wikipedia.org/wiki/Entailment" target="_blank">Entailment</a> for the many faces of "if"), and using "===&gt;" to mean "rewrites to":
+<p style="padding-left:30px;">(F if D &amp;&amp; L &amp;&amp; S) ===&gt; F or not (D &amp;&amp; L &amp;&amp; S)</p>
+and then, by <a href="http://en.wikipedia.org/wiki/De_Morgan%27s_laws">De Morgan's</a>:
+<p style="padding-left:30px;">F or not (D &amp;&amp; L &amp;&amp; S) ===&gt; F or not D or not L or not S</p>
+Prolog now tries to disprove D, then L, then S in sequence. It stops with an overall 'no' if it gets one solid disproof (or failure to prove) along the way, only concluding that F is proved if it cannot disprove any of the others, and reporting the variable bindings it accumulated on the way.
