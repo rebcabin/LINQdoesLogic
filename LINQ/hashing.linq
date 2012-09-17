@@ -21,7 +21,7 @@ void Main()
     }
     var sw = new Stopwatch();
 
-    Console.WriteLine ("Test for presence and absense of certain words.");
+    Console.WriteLine ("Test for presence and absence of certain words.");
     sw.Start();
     words
         .Contains("prehistorically")
