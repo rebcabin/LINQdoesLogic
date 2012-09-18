@@ -38,7 +38,7 @@ void Main()
                                           Right = new @constant {Value = 6}}}};
                                           
     // The evaluator is now of type IEnumerable<@expression> to 
-    // IEnumerable<@expression>, represented as a lambda expression
+    // IEnumerable<int>, represented as a lambda expression
     // inside a Select (i.e., Map)
     
     exprs
