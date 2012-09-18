@@ -1,4 +1,17 @@
-<Query Kind="Program" />
+<Query Kind="Program">
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\Microsoft.Reactive.Testing.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Core.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Interfaces.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Linq.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.PlatformServices.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Providers.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Runtime.Remoting.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Windows.Forms.dll</Reference>
+  <Reference>&lt;ProgramFilesX86&gt;\Microsoft SDKs\Reactive Extensions\v2.0\Binaries\.NETFramework\v4.0\System.Reactive.Windows.Threading.dll</Reference>
+  <Namespace>System.Reactive.Subjects</Namespace>
+  <Namespace>System.Reactive.Linq</Namespace>
+  <Namespace>System.Reactive</Namespace>
+</Query>
 
 void Main()
 {
@@ -57,11 +70,20 @@ void Main()
         
     // or a whole array of random expressions
     Enumerable
-        .Range(0, 20)
+        .Range(0, 10)
         .Select(_ => @expression.generate())
         .Select(e => e.linqEvaluate())
-        .Dump("Values of 20 random expression trees")
+        .Dump("Values of 10 random expression trees")
         ;
+        
+    // Reactive version
+    Observable
+        .Interval(TimeSpan.FromSeconds(1.0))
+        .Take(10)
+        .Select(_ => @expression.generate())
+        .Subscribe(e => new {expression = e, value = e.linqEvaluate()}
+            .Dump("A new expression every tick")
+            );
 }
 
 public static class Extensions
