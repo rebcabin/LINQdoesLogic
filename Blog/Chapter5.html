@@ -1,153 +1,147 @@
-Moving forward through the samples in Feraudy's original distribution
-of SProlog, we see Exampl4.SPR is a demonstration of IO
-primitives. That sample isn't specifically about logic programming,
-but rather about how Prolog interfaces with the "normal world". We'll
-skip it.
+"<em>Embedding recursive function in LINQ gives us opportunities for dynamically composable and remotable streams of operations. If we make a library of expression processors -- evaluators, optimizers, rewriters of all kinds -- all of type Expression -&gt; Expression, then can put them in LINQ .Select and .SelectMany methods, which we can apply to IEnumerables and IObservables of expressions. We can send these around the system as data via IQueryable and IQbservable, allowing us to build up and tear down whole processing graphs completely dynamically, without rebuilding and redeploying applications and services.</em>"
 
-Exampl5.SPR is about recursion. This is interesting.
+Moving forward through <a href="https://github.com/rebcabin/LINQdoesLogic/tree/master/SPR" target="_blank">the samples in Feraudy's original distribution of SProlog</a>, we see <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL4.SPR" target="_blank">Exampl4.SPR</a> is a demonstration of IO primitives. That isn't specifically about logic programming, but rather about how Prolog interfaces with the "normal world". We'll skip it.
 
-Checking  multiple collections for mutual membership of some item is an emerging theme in our examples. For instance, we want to know if some material has a certain value for specific density, and, if so, whether it's also in a database of solubles.
+<a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL5.SPR" target="_blank">Exampl5.SPR</a> is about recursion. This is interesting.
 
-The time it takes to scan a collection is proportional to the length of the collection. Imagine looking for a word in a dictionary by starting at the beginning and checking every word. A standard way to speed this up is, of course, <a href="http://en.wikipedia.org/wiki/Hash_function" target="_blank">hashing</a>. In the case of a paper dictionary, your "hash function" returns the first letter of the word, which sends you to a "hash bucket:" the section of the dictionary with all the words beginning with that letter. You naturally recurse, effecting a <a href="http://en.wikipedia.org/wiki/Trie">trie</a> search.
+This particular example is a lesson in writing an expression evaluator in Prolog. Now, expression evaluation is a completely standard and <a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-4.html#%_toc_start" target="_blank">classic lesson in recursion and method dispatch</a>, and has been done to death in every programming language under the sun, e.g., <a href="http://shadowcoding.blogspot.com/2008/10/f-mindblow-simple-math-expression.html" target="_blank">F#</a>, <a href="http://www.codeproject.com/Articles/12116/JavaScript-Mathematical-Expression-Evaluator" target="_blank">JavaScript</a>, <a href="http://scee.sourceforge.net/" target="_blank">Scala</a>, <a href="http://effbot.org/zone/simple-top-down-parsing.htm" target="_blank">Python</a>, etc. Could there possibly be anything more to say about it?
 
-As the number of collections to cross-check grows, so grows the importance of speeding up the checks. The time to check all collections grows as the <em>product</em> of the sizes of the collections. Imagine checking that a certain word is in four different dictionaries, first using the brute-force-scan method then using the brighter hash method. Now imagine doing likewise for 1,000 words.
+Maybe. Turns out that embedding such a thing in LINQ does give us a new twist: composable <a href="http://webcache.googleusercontent.com/search?q=cache:TuCXGAbtstYJ:www.cs.dartmouth.edu/~doug/music.ps.gz+&amp;cd=1&amp;hl=en&amp;ct=clnk&amp;gl=us" target="_blank">streaming</a>. If we make the evaluator of type Expression -&gt; Expression, then it becomes something we can put in a LINQ .Select method, which we can apply to an IEnumerable of expressions, or even better, to an IObservable of expressions. We can subscribe the evaluator to a potentially infinite stream of expressions and evaluate them as they arrive, forever. We can conceptually generalize from mere evaluators to all kinds of other expression processors.
 
-In <a href="http://rebcabin.wordpress.com/2012/08/31/linq-does-logic-chapter-2-conjunctions/">Chapter 2: Conjunctions</a>, we built LINQ and Mathematica examples that check whether materials float on water by looking up densities and solubilities. The running times of these programs over the tiny sample data set were negligible, but we noted that the method used would not scale. That method used the <a href="http://msdn.microsoft.com/en-us/library/bb352880.aspx">.Contains extension method on IEnumerable</a> and the <a href="http://reference.wolfram.com/mathematica/ref/MemberQ.html?q=MemberQ&amp;lang=en">MemberQ primitive on Lists</a> to scan the entire list of solubles for each candidate material.
+Let's first transcribe Feraudy's example closely. He will take an expression and produce an integer. In the below, <code>iplus</code>, <code>imult</code>, and <code>iminus</code> are built-in Prolog primitives for integer arithmetic. Feraudy's grammar presents two kinds of expressions: constants and binary expressions. The constant kind "bottom-out" the recursions and just produce integer values directly. The binary kind recursively walk the expression tree, evaluating left and right branches until they reduce to integers and then combining them with the built-in operators. Standard mathematical induction will furnish a proof of termination of this program on well formed finite inputs.
+<pre>((evaluate V V)
+ (integer V)
+)
+((evaluate (E1 Operator E2) V)
+ (evaluate E1 V1) /* evaluate calls itself */
+ (evaluate E2 V2)
+ (apply_operator Operator V1 V2 V)
+)
 
-In this chapter, we build another example with longer lists and starkly illustrate that the brute-force methods are intolerable. In the offing, we fix the problem using a <em>composable</em> hash-set type. We create a LINQ operation that converts an IEnumerable into a hash set, and transparently insert that operation into a chain of other operations. <strong>This is more than just good aesthetics: much later, we shall see that remoting composable LINQ operations opens whole vistas of dynamic scenarios, where pipelines can be set up and taken down on-the-fly.</strong>
+((apply_operator plus X Y Z)
+ (iplus X Y Z)
+)
+((apply_operator minus X Y Z)
+ (iminus X Y Z)
+)
+((apply_operator times X Y Z)
+ (imult X Y Z)
+)</pre>
+This is pretty easy to emulate in C# LINQ. We'll use abstract classes for the expression and operator types, putting specialized implementations of <code>evaluate</code> and <code>apply</code> in sealed subclasses. We won't try to make the classes generic on the underlying numeric type; we'll just use integers for now (<a href="http://blogs.msdn.com/b/lucabol/archive/2009/02/05/simulating-inumeric-with-dynamic-in-c-4-0.aspx" target="_blank">while it's interesting to pursue numeric generics, it's non-trivial and a whole 'nuther can of worms</a>).
 
-First, look at "<a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/hashing.linq">hashing.linq</a>" in the <a href="https://github.com/rebcabin/LINQdoesLogic/tree/master/LINQ">LINQ subdirectory</a> of the <a href="https://github.com/rebcabin/LINQdoesLogic">"LINQdoesLogic" repo</a>. It refers to a <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/DATA/WORDS.TXT" target="_blank">data file</a> of about 350,000 English words adapted from <a href="http://www.gutenberg.org/ebooks/3201" target="_blank">the public-domain MOBY lists</a>. To run this <a href="http://www.linqpad.net/" target="_blank">LINQpad script</a>, you will have to adjust the file location or the reference to it in the script -- the checked-in version of the script assumes the file is in
-<pre>c:/tmp/words.txt</pre>
-The script first reads the file and then does timed lookups of two words, "prehistorically," which is in the file, and "zzzzzzzz," which isn't, as follows:
-<pre>    var sw = new Stopwatch();
-    sw.Start();
-    words
-        .Contains("prehistorically")
-        .Dump("Does the IEnumerable contain \"prehistorically\"?")
-        ;
-    sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds
-    required to decide whether the words IEnumerable contains
-    \"prehistorically\"");</pre>
-On my <a href="https://www.lenovo.com/products/us/laptop/thinkpad/w-series/w520/w520_datasheet.pdf" target="_blank">dreadnaught-class Lenovo laptop</a>, plugged in, these lookups take around 15 to 30 milliseconds, respectively (about twice that on battery).
+Here's a real quick hack at it, with names decorated by '@' both to conceal the use of a keyword, namely 'operator,' and to give a radiant aura of specialness to these classes:
+<pre>public abstract class @expression 
+{   public abstract int evaluate();   }
 
-These timings are probably not very accurate because they're too short compared to the included overhead of printing an answer. Later in the file, along with some other digressions that might interest you, there are snippets that look up 1000 words and amortize the overhead, taking around 15 seconds, consistent with the shorter end of the single-word lookup time.
+public sealed class @constant : @expression
+{   public int Value {get; set;}
+    public override int evaluate ()
+    {   return Value;   }   }
 
-We then build a hash set, first using the <a href="http://msdn.microsoft.com/en-us/library/bb353005.aspx" target="_blank">built-in "Add" method</a> of the <a href="http://msdn.microsoft.com/en-us/library/bb359438" target="_blank">built-in HashSet class</a> in the .NET Framework. This method takes a HashSet and an element and returns true if the element was inserted in the HashSet. This protocol allows us to insert and count all the non-duplicate words in the file into a hash set with a LINQ composition like the following:
-<pre>    var wordsHashSet = new HashSet&lt;string&gt;();
-    sw.Reset(); sw.Start();
-    words
-        .Where(w =&gt; wordsHashSet.Add(w))
-        .Count()
-        .Dump("Count of unique words in the hash set")
-        ;
-    sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to
-    build and enumerate the hash set by transformation");</pre>
-Note the "Where" method instead of "Select." With "Where", we noticed that the original MOBY word list "single.txt" actually contained a duplicate word, "animate," because the count revealed by LINQ differed from the line count of the file by 1. This mistake has certainly been in the MOBY file for years but it was easy to find via LINQ. I took it out of "words.txt," but I have left it in the Mathematica version of our program for illustrative purposes.
+public sealed class @binary : @expression
+{   public @expression Left  {get; set;}
+    public @operator   Op    {get; set;}
+    public @expression Right {get; set;}
+    public override int evaluate ()
+    {   return Op.apply(Left.evaluate(), Right.evaluate());   }   
+}
 
-Ok, this is great, we have a hash set. We next do some timed lookups of our test words and find them to be negligible.
-<pre>    sw.Reset(); sw.Start();
-    wordsHashSet
-        .Contains("prehistorically")
-        .Dump("Does the hash set contain \"prehistorically\"?")
-        ;
-    sw.Stop(); sw.ElapsedMilliseconds.Dump("Elapsed milliseconds to 
-    decide whether the hash set contains \"prehistorically\"");</pre>
-However, we have lost something. The only thing we can do with this approach is load the hash set by side effect and then use it later. This requires us to create a variable for the hash set, so it's not composable. <strong>It's a rule -- whenever you must create a variable "out of line" of the LINQ query, the query itself is not composable, because it depends on the variable created in its environment. </strong>You can't cut and paste the query or remote it without its whole environment.
+public abstract class @operator
+{   public abstract int apply(int a, int b);   }
 
-If we could bypass the variable, we would have a composable transform that converts the original word list into an efficient form and only then does the tough work.
+public sealed class @plus : @operator
+{   public override int apply(int a, int b)
+    {   return a + b;   }   }
 
-In fact, there is an even deeper level of composability available, and that is in the creation of the hash set itself. Our eyes tell us that if <a href="http://msdn.microsoft.com/en-us/library/x303t819.aspx">ToArray</a> and <a href="http://msdn.microsoft.com/en-us/library/bb342261.aspx">ToList</a> and <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.todictionary.aspx">ToDictionary</a> are good LINQ, then ToHashSet would be good LINQ, but we must create it. We'll need a "streaming AddTo" along the way, which will stand us in good stead in future <a href="http://msdn.microsoft.com/en-us/data/gg577609.aspx">Reactive scenarios</a>. But, getting back to hashing; we treat the hash set as a <em>mere aggregate</em> of the original word list!
-<pre>    public static class Extensions
-    { ...
-        public static ICollection&lt;T&gt; AddTo&lt;T&gt;(
-            this ICollection&lt;T&gt; target, T item)
-        {   target.Add(item);
-            return target;
-        }
-        public static HashSet&lt;T&gt; ToHashSet&lt;T&gt;(
-            this IEnumerable&lt;T&gt; source)
-        {   return source.Aggregate(
-               new HashSet&lt;T&gt;(),
-               (hs, elt) =&gt; (HashSet&lt;T&gt;)(hs.AddTo(elt)));
-        }
-    ...
-    }</pre>
-Let's make the whole exercise much more challenging (see <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/composableHashing.linq" target="_blank">composableHashing.linq</a> in the <a href="https://github.com/rebcabin/LINQdoesLogic" target="_blank">repo</a>). First, imagine a transform that takes a random sample of a given length out of the original word list
-<pre>    words
-        .ToArray()
-        .RandomChoice(words.Count(), 1000)</pre>
-where
-<pre>    public static class Extensions
-    { ...
-        private static Random random = new Random();
-        public static IEnumerable&lt;T&gt; RandomChoice&lt;T&gt;(
-            this IEnumerable&lt;T&gt; source, int length, int count = 1)
-        {   var result = new T [count];
-            for (var i = 0; i &lt; count; i++)
-                result[i] = source.ElementAt(random.Next(0, length));
-            return result;
-        }
-    ...
-    }</pre>
-The "ToArray" is critical. The "ElementAt" inside "RandomChoice" is efficient for arrays, but not for lists. To convince yourself of this, try timing the above with and without the "ToArray."
+public sealed class @times : @operator
+{   public override int apply(int a, int b)
+    {   return a * b;   }   }
 
-In any event, once we have the sample, we want to run membership tests for every element of the sample on the original word list to stress the membership checking. Semantically, we want to write something like the following (Don't try this; it takes minutes, but have no fear, we're fixing it:)
-<pre>    words
-        .ToArray() // comment this out to make it slower
-        .RandomChoice(words.Count(), 1000)
-        .Where(s =&gt; words
-            .ToHashSet() // comment this out to make it faster
-            .Contains(s))
-        .Count()
-        .Dump("Number of sample words in the original (expect 1000)")</pre>
-The "ToHashSet" here is <a href="http://www.math.columbia.edu/~woit/wordpress/" target="_blank">not even wrong</a> because we recreate the hash set for every word in the sample. However, we can create a local name, inline, to contain the hash set, which we make just once. <strong>The best way to create local names in composable queries is with <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx" target="_blank">anonymous types</a></strong>:
-<pre>    new [] { new {
-            aWords = words.ToArray(), 
-                // comment out ToArray to go slow
-            hWords = words.ToHashSet() 
-                // comment out ToHashSet to go REALLY slow
-    }   }
-        .Select(o =&gt; new {
-            hWords = o.hWords,
-            sample = o.aWords.RandomChoice(o.aWords.Count(), 1000)
-        })
-        .Select(o =&gt; o.sample
-            .Where(s =&gt; o.hWords.Contains(s))
-        )
-        .ElementAt(0)
-        .Count()
-        .Dump("number of samples in the original set (expect 1000)")
-        ;
-    }</pre>
-This isn't <em>perfect</em> because later lines must <em>know</em> the names created in earlier lines, but the lines can be cut and pasted and remoted freely because they have no dependence on environment outside the query, just on local names created earlier in the query.
+public sealed class @minus: @operator
+{   public override int apply(int a, int b)
+    {   return a - b;   }   }</pre>
+Just as with the Prolog version, these don't do much beyond converting infix notation to prefix notation. Here's an example usage, essentially a unit test:
+<pre>    // This is a transcription of 4 * (5 + 6) == 44
+    new @binary {
+        Left  = new @constant {Value = 4},
+        Op    = new @times(),
+        Right = new @binary {
+            Left  = new @constant {Value = 5},
+            Op    = new @plus(),
+            Right = new @constant {Value = 6}}}
+        .evaluate()
+        .Dump("Non-LINQ method: expect 44")
+        ;</pre>
+Ok, great. Now, let's package the expressions in an IEnumerable so we can use .Select to apply the evaluator:
+<pre>    // LINQ method introduces one level of IEnumerable / IObservable
+    var exprs = new [] { // Puts expression in IEnumerable&lt;@expression&gt;
+        // The rest is as above
+        new @binary {
+            Left  = new @constant {Value = 4},
+            Op    = new @times(),
+            Right = new @binary {
+                Left  = new @constant {Value = 5},
+                Op    = new @plus(),
+                Right = new @constant {Value = 6}}}};</pre>
+The evaluator is now of type IEnumerable&lt;@expression&gt; to IEnumerable&lt;int&gt;, represented as a lambda expression inside a Select (i.e., a Map):
+<pre>    exprs
+        .Select(e =&gt; e.evaluate())
+        .Dump("Bad LINQ method: expect IEnum of int containing 44")
+        ;</pre>
+Oops! We can't compose this with downstream functions that manipulate expressions. We've left the world of expressions and entered the world of integers. For composability, the entire evaluator is of the WRONG TYPE! We must make it produce IEnumerable&lt;@expression&gt; and not IEnumerable&lt;int&gt;. Let's do this by adding linqEvaluate and linqApply methods, and let's make a different operator (a so-called co-monadic one) to "extract" values from an expression! Extract should only work on leaf-level expressions, so the default implementation in the base class throws an exception:
+<pre>public abstract class @expression 
+{   public virtual int extract()
+    {   throw new InvalidOperationException(
+        "cannot extract a value from an arbitrary expression");   }
+    public abstract @expression linqEvaluate();   }
 
-This can be mitigated a bit using <a href="http://msdn.microsoft.com/en-us/library/dd386941.aspx" target="_blank">.NET Tuples</a>. With them, dependent lines must know the <em>positions</em> of required items within a tuple. Either way -- with property names in anonymous types or with positional references in Tuples, there is a little, conventional contract amongst the composable parts in the query. This is the maximal decoupling we know how to effect at this time.
+public sealed class @constant : @expression
+{   public int Value {get; set;}
+    public override int extract ()
+    {   return Value;   }
+    public override @expression linqEvaluate ()
+    {   return this;   }   }
 
-Now, to <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/MMA/WordsChapter4.nb" target="_blank">the Mathematica version</a>. First, we can conveniently include the entire word list inline as a "closed" cell to remove the dependence on the file system. Second, we left in the duplicate word "animate" in case you want to experiment with writing some queries to find it.
+public sealed class @binary : @expression
+{   public @expression Left  {get; set;}
+    public @operator   Op    {get; set;}
+    public @expression Right {get; set;}
+    public override @expression linqEvaluate ()
+    {   return Op.linqApply(Left.linqEvaluate(), Right.linqEvaluate());   }   
+}
 
-There are a several ways to represent hash sets in Mathematica. The most versatile is as a list of rules. A natural way to build one is by Mapping (in LINQ: Selecting) a transform over the words. The transform converts a word into a rule that maps the word to True. Here is a sample
-<pre>    Map[#-&gt;True&amp;,words]//RandomChoice[#,5]&amp;//TableForm
+public abstract class @operator
+{   public abstract @expression linqApply(@expression a, @expression b);   
+}
 
-    entia-&gt;True
-    galeoid-&gt;True
-    manderelle-&gt;True
-    accent-&gt;True
-    tricot-&gt;True</pre>
-The "list of rules" representation is incredibly versatile and powerful. It is the natural representation for an object, both in the object-oriented-programming sense and in the JSON sense. For present purposes, we run Mathematica's built-in <a href="http://reference.wolfram.com/mathematica/ref/Dispatch.html?q=Dispatch&amp;lang=en" target="_blank">Dispatch</a> function over the list of rules, which transparently converts the list into a hash table, which we are underutilizing as a mere hash set:
-<pre>    hashSet = (Map[# -&gt; True &amp;, words] // Dispatch);</pre>
-We now make our stress-test sample of 1,000 words
-<pre>    bigSample=RandomChoice[words,{1000}];</pre>
-and compare the times of checking for membership using old-slow MemberQ (almost 5 seconds!)
-<pre>    In[11]:= Timing @ (And @@ Map[MemberQ[words, #] &amp; , bigSample])
-    Out[11]= {4.696, True}</pre>
-versus shiny-new-fast hashing (less than 1/10 of a second!)
-<pre>    In[12]:= Timing @ 
-        (And @@ Map[True === (# /. hashSet) &amp;, bigSample])
-    Out[12]= {0.078, True}</pre>
-Notice the <a href="http://reference.wolfram.com/mathematica/ref/ReplaceAll.html?q=ReplaceAll&amp;lang=en" target="_blank">ReplaceAll</a> operator:
-<pre>/.</pre>
-The way to look something up in a list of rules (or its optimized equivalent hash table) is just to apply the rules to an expression. In this case, the expression is #, the argument of the function in Map, which takes on the value of each word in bigSample in turn.
+public sealed class @plus : @operator
+{   public override @expression linqApply(@expression a, @expression b)
+    {   return new @constant {Value = a.extract() + b.extract()};   }   
+}
 
-As usual, we're impressed with the terseness of Mathematica, despite its slightly geeky syntax, but we are also gratified that we know how to do exactly the same thing fluidly and <a href="http://stackoverflow.com/questions/214500/which-linq-syntax-do-you-prefer-fluent-or-query-expression" target="_blank">fluently</a> in LINQ.
+public sealed class @times : @operator
+{   public override @expression linqApply(@expression a, @expression b)
+    {   return new @constant {Value = a.extract() * b.extract()};   }   
+}
 
-Colophon: The link on "fluently" above conceals a pun. If you wish to investigate local names and chained dependencies in composable queries more deeply , do click on it and read Joe Albahari's answer.
+public sealed class @minus: @operator
+{   public override @expression linqApply(@expression a, @expression b)
+    {   return new @constant {Value = a.extract() - b.extract()};   }   
+}</pre>
+This is just like the old stuff, only it makes sure that the gazoutas are the same type as the gazintas, namely of type @expression. That means we can freely compose expression rewriters -- not just evaluators -- anywhere in a LINQ pipeline. <a href="http://en.wikipedia.org/wiki/Rewriting" target="_blank">Such rewriters can do all kinds of things</a>: optimization, customization, repurposing, and reasoning with logic! So we have come full circle (though we're not nearly done with this series!). While investigating logic programming via LINQ, we found that LINQ's composability led us directly to opportunities to apply logic programming to expressions. This is a gold mine.
+
+Let us end with a couple of examples of using these new classes. There is a complete <a href="http://www.linqpad.net/CodeSnippetIDE.aspx" target="_blank">LINQpad</a> script here with all this in more for your experimentation. Here is a usage example generating random expression trees and evaluating them in an IEnumerable:
+<pre>    Enumerable
+        .Range(0, 10)
+        .Select(_ =&gt; @expression.generate())
+        .Select(e =&gt; e.linqEvaluate())
+        .Dump("Values of 10 random expression trees")
+        ;</pre>
+and here is a similar example evaluating them via a push model in an IObservable:
+<pre>    Observable
+        .Interval(TimeSpan.FromSeconds(1.0))
+        .Take(10)
+        .Select(_ =&gt; @expression.generate())
+        .Subscribe(e =&gt; new {expression = e, value = e.linqEvaluate()}
+            .Dump("A new expression every tick")
+            );</pre>
