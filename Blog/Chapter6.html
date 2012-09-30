@@ -20,7 +20,7 @@ What we can do, technically, is strip ALL methods off the classes, leaving only 
 
 The current program, though, is to get rid of all methods and replace them with lambda expressions. Then, the calls to evaluate them, namely
 <div id="LC59">    exprs</div>
-<div id="LC60">        .Select(e =&gt; <span style="color: #ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
+<div id="LC60">        .Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
 <div id="LC61">        .Dump("Good LINQ method: expect IEnum of @expression")</div>
 <div id="LC62">        ;</div>
 <div></div>
@@ -41,15 +41,15 @@ and
 <div id="LC66">        .generate()</div>
 <div id="LC67">        .Return()</div>
 <div id="LC68">        .Dump("Random Expression Tree")</div>
-<div id="LC69">        .Select(e =&gt; <span style="color: #ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
+<div id="LC69">        .Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
 <div id="LC70">        .Dump("Value of the Tree")</div>
 <div id="LC71">        ;</div>
 <div id="LC72"></div>
-<div>The magic is in this definition of @eval, which takes its self-application as one input and the expression to evaluate as its second input. The Y Combinator, namely</div>
+The magic is in this definition of @eval, which takes its self-application as one input and the expression to evaluate as its second input. The Y Combinator, namely
 <div></div>
+<div>    delegate Func&lt;A,R&gt; Rec&lt;A,R&gt;(Rec&lt;A,R&gt; _);</div>
 <div>
-<div id="LC90">    delegate Func&lt;A,R&gt; Rec&lt;A,R&gt;(Rec&lt;A,R&gt; _);</div>
-<div id="LC91">    public static Func&lt;A,R&gt; Y&lt;A,R&gt;(Func&lt;Func&lt;A,R&gt;, Func&lt;A,R&gt;&gt; s)</div>
+<div id="LC91">    public static Func&lt;A,R&gt; <strong><span style="color:#ff0000;">Y</span></strong>&lt;A,R&gt;(Func&lt;Func&lt;A,R&gt;, Func&lt;A,R&gt;&gt; s)</div>
 <div id="LC92">    { Rec&lt;A,R&gt; rec = f =&gt; n =&gt; s(f(f))(n);</div>
 <div id="LC93">        return rec(rec); // (g |-&gt; g@g) applied to f =&gt; ...</div>
 <div id="LC94">    }</div>
@@ -57,13 +57,13 @@ creates the appropriately delayed self-application so that eval can "call itself
 
 </div>
 <div>    Func&lt;Func&lt;@expression,@expression&gt;,Func&lt;@expression,@expression&gt;&gt;</div>
-<div id="LC49">        <span style="color: #ff0000;"><strong>@eval</strong></span> = <strong><span style="color: #3366ff;">ev</span></strong> =&gt; <strong><span style="color: #339966;">ex</span></strong> =&gt;</div>
-<div id="LC50">            (<strong><span style="color: #339966;">ex</span></strong> is @constant) ? <strong><span style="color: #339966;">ex</span></strong></div>
-<div id="LC51">            : (<strong><span style="color: #339966;">ex</span></strong> is @binary) ?</div>
+<div id="LC49">        <span style="color:#ff0000;"><strong>@eval</strong></span> = <strong><span style="color:#3366ff;">ev</span></strong> =&gt; <strong><span style="color:#339966;">ex</span></strong> =&gt;</div>
+<div id="LC50">            (<strong><span style="color:#339966;">ex</span></strong> is @constant) ? <strong><span style="color:#339966;">ex</span></strong></div>
+<div id="LC51">            : (<strong><span style="color:#339966;">ex</span></strong> is @binary) ?</div>
 <div id="LC52">            @apply(</div>
-<div id="LC53">                (<span style="color: #339966;"><strong>ex</strong></span> as @binary).Op,</div>
-<div id="LC54">                <strong><span style="color: #3366ff;">ev</span></strong>((<strong><span style="color: #339966;">ex</span></strong> as @binary).Left),</div>
-<div id="LC55">                <span style="color: #3366ff;"><strong>ev</strong></span>((<span style="color: #339966;"><strong>ex</strong></span> as @binary).Right))</div>
+<div id="LC53">                (<span style="color:#339966;"><strong>ex</strong></span> as @binary).Op,</div>
+<div id="LC54">                <strong><span style="color:#3366ff;">ev</span></strong>((<strong><span style="color:#339966;">ex</span></strong> as @binary).Left),</div>
+<div id="LC55">                <span style="color:#3366ff;"><strong>ev</strong></span>((<span style="color:#339966;"><strong>ex</strong></span> as @binary).Right))</div>
 <div id="LC56">            : default(@expression)</div>
 <div id="LC57">            ;</div>
 <div></div>
