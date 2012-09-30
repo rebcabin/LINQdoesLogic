@@ -9,8 +9,8 @@ In chapter 5, we used instance methods on classes in C# to do the recursion. In 
 {   public @expression Left  {get; set;}
     public @operator   Op    {get; set;}
     public @expression Right {get; set;}
-    public override @expression linqEvaluate ()
-    {   return Op.linqApply(Left.linqEvaluate(), Right.linqEvaluate());  }
+    public override @expression <strong><span style="color:#ff0000;">linqEvaluate</span> </strong>()
+    {   return Op.linqApply(Left.<strong><span style="color:#ff0000;">linqEvaluate</span></strong>(), Right.<strong><span style="color:#ff0000;">linqEvaluate</span></strong>());  }
 }</pre>
 There we see that linqEvaluate on a @binary @expression recursively calls linqEvaluate on the Left and Right operand @expressions, then calls the operator's linqApply method on the results.
 
