@@ -18,8 +18,7 @@ void Main()
     var c1 = new @constant {Value = 4};
     
     // LINQ method introduces one level of IEnumerable / IObservable
-    var exprs = new [] { // Puts the expression in an IEnumerable<@expression>
-        // The rest is as above
+    var exprs = new [] { // IEnumerable<@expression>
         new @binary {Left  = new @constant {Value = 4},
                      Op    = new @times(),
                      Right = new @binary {Left  = new @constant {Value = 5},
