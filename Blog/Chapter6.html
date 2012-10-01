@@ -1,6 +1,6 @@
 In <a href="http://bit.ly/UAYPBx" target="_blank">Chapter 5</a>, we used <a href="http://msdn.microsoft.com/en-us/library/bb394939.aspx#standardqueryops_topic4" target="_blank">LINQ's .Select operator</a> to call recursive methods in a composable fashion. In this chapter, we make the recursive calls remotable via recursive <a href="http://msdn.microsoft.com/en-us/library/bb397687.aspx" target="_blank">lambda expressions</a>, getting rid of pre-canned methods altogether. This will allow the crowd marketplace to innovate certain functions that are not pre-canned in the cloud, while not completely sacrificing sandbox security.
 
-In earlier posts, we showed how to create <a href="http://bit.ly/PDobxN" target="_blank">remotable recursive lambda expressions in JavaScript</a>. This time, we use <a href="http://bit.ly/PPEZ5R" target="_blank">Wes Dyer's version of the same thing in C#</a>, and add a <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/MMA/YCombinator.cdf" target="_blank">redux in Mathematica</a>�and <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/YCombinator.linq" target="_blank">another in LINQPad</a> of his superior derivation and explanation.
+In earlier posts, we showed how to create <a href="http://bit.ly/PDobxN" target="_blank">remotable recursive lambda expressions in JavaScript</a>. This time, we use <a href="http://bit.ly/PPEZ5R" target="_blank">Wes Dyer's version of the same thing in C#</a>, and add a <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/MMA/YCombinator.cdf" target="_blank">redux in Mathematica</a> and <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/YCombinator.linq" target="_blank">another in LINQPad</a> of his superior derivation and explanation.
 
 Chapter 5 presented a composable version of <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL5.SPR" target="_blank">Feraudy's EXAMPL5.SPR in Prolog</a>, which implements a vestigial expression evaluator. The example is an architecturally sound foundation for a real-world expression evaluator. For example, we could, in principle, create an evaluator for Mathematica expressions. If those expressions are remotable, we could, for instance, author and test them in Mathematica and evaluate them in a sandbox written in C# or JavaScript, even on another machine. Such a sandbox would not have all the massive power and library knowledge of Mathematica, of course, but we could emulate Mathematica's fundamental term-rewriting strategy to implement basic symbolic computations and pattern matching to enable advanced scenarios involving, say, units of measure, logic programming, and rules-driven workflow processes.
 
@@ -14,55 +14,55 @@ In chapter 5, we used instance methods on classes in C# to do the recursion. In 
 }</pre>
 There we see that linqEvaluate on a @binary @expression recursively calls linqEvaluate on the Left and Right operand @expressions, then calls the operator's linqApply method on the results.
 
-In a remoting context, this will work fine if both the sender and the receiver have the definitions of the C# classes, in particular the CLR code that implements the methods. Such a situation even has security advantages: you can't remote a call when the receiver does not statically know the class type and all its method code. But it's also too restrictive. You can't call any recursive function that isn't statically pre-canned at a receiver. That means that the receiver must have pre-installed all allowable methods, and that means that no innovation in the crowd. Depending on scenario, this may be exactly what you want, or exactly what you DON'T want.
+In a remoting context, this will work fine if both the sender and the receiver have the definitions of the C# classes, in particular the CLR code that implements the methods. Such a situation even has security advantages: you can't remote a call when the receiver does not statically know the class type and all its method code. But it's also too restrictive. You can't call any recursive function that isn't statically pre-canned at a receiver. That means that the receiver must have pre-installed all allowable methods, and that means no innovation in the crowd. Depending on scenario, this may be exactly what you want, or exactly what you DON'T want.
 
 What we can do, technically, is strip ALL methods off the classes, leaving only data. Remoting data is relatively easy -- serialize into JSON or XML or whatever. Then, we package CODE as DATA, also, using <a href="http://msdn.microsoft.com/en-us/library/bb397951.aspx" target="_blank">.NET Expressions</a>. This representation is automatically created from <a href="http://msdn.microsoft.com/en-us/library/system.linq.iqueryable.aspx" target="_blank">IQueryable</a> and <a href="http://msdn.microsoft.com/en-us/library/system.reactive.linq.iqbservable(v=vs.103).aspx" target="_blank">IQbservable</a> so long as the code is stored in lambda expressions in LINQ query operators like .Select and .Where. It's also possible to write .NET Expressions explicitly, and there will be a lot more to say about this later.
 
 The current program, though, is to get rid of all methods and replace them with lambda expressions. Then, the calls to evaluate them, namely
-<div id="LC59">����exprs</div>
-<div id="LC60">��������.Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
-<div id="LC61">��������.Dump("Good LINQ method: expect IEnum of @expression")</div>
-<div id="LC62">��������;</div>
+<div id="LC59">    exprs</div>
+<div id="LC60">        .Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
+<div id="LC61">        .Dump("Good LINQ method: expect IEnum of @expression")</div>
+<div id="LC62">        ;</div>
 where
 <div>
-<div id="LC18">� � var c1 = new @constant {Value = 4};</div>
-<div id="LC19">� � var exprs = new [] { // IEnumerable&lt;@expression&gt;</div>
-<div id="LC22">� � � � new @binary {Left = new @constant {Value = 4},</div>
-<div id="LC24">���������������������Op = new @times(),</div>
-<div id="LC25">���������������������Right = new @binary {Left = new @constant {Value = 5},</div>
-<div id="LC26">������������������������������������������Op = new @plus(),</div>
-<div id="LC27">������������������������������������������Right = new @constant {Value = 6}}}};</div>
+<div id="LC18">    var c1 = new @constant {Value = 4};</div>
+<div id="LC19">    var exprs = new [] { // IEnumerable&lt;@expression&gt;</div>
+<div id="LC22">        new @binary {Left = new @constant {Value = 4},</div>
+<div id="LC24">                     Op = new @times(),</div>
+<div id="LC25">                     Right = new @binary {Left = new @constant {Value = 5},</div>
+<div id="LC26">                                          Op = new @plus(),</div>
+<div id="LC27">                                          Right = new @constant {Value = 6}}}};</div>
 and
 
 </div>
-<div id="LC64">� � Extensions</div>
-<div id="LC66">��������.generate()</div>
-<div id="LC67">��������.Return()</div>
-<div id="LC68">��������.Dump("Random Expression Tree")</div>
-<div id="LC69">��������.Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
-<div id="LC70">��������.Dump("Value of the Tree")</div>
-<div id="LC71">��������;</div>
+<div id="LC64">    Extensions</div>
+<div id="LC66">        .generate()</div>
+<div id="LC67">        .Return()</div>
+<div id="LC68">        .Dump("Random Expression Tree")</div>
+<div id="LC69">        .Select(e =&gt; <span style="color:#ff0000;"><strong>Y(@eval)(e)</strong></span>)</div>
+<div id="LC70">        .Dump("Value of the Tree")</div>
+<div id="LC71">        ;</div>
 <div id="LC72"></div>
 The magic is in this definition of @eval, which takes its self-application as one input and the expression to evaluate as its second input. The Y Combinator, namely
 <div></div>
-<div>� � delegate Func&lt;A,R&gt; Rec&lt;A,R&gt;(Rec&lt;A,R&gt; _);</div>
+<div>    delegate Func&lt;A,R&gt; Rec&lt;A,R&gt;(Rec&lt;A,R&gt; _);</div>
 <div>
-<div id="LC91">� � public static Func&lt;A,R&gt; <strong><span style="color:#ff0000;">Y</span></strong>&lt;A,R&gt;(Func&lt;Func&lt;A,R&gt;, Func&lt;A,R&gt;&gt; s)</div>
-<div id="LC92">� � { Rec&lt;A,R&gt; rec = f =&gt; n =&gt; s(f(f))(n);</div>
-<div id="LC93">� � � � return rec(rec); // (g |-&gt; g@g) applied to f =&gt; ...</div>
-<div id="LC94">� � }</div>
+<div id="LC91">    public static Func&lt;A,R&gt; <strong><span style="color:#ff0000;">Y</span></strong>&lt;A,R&gt;(Func&lt;Func&lt;A,R&gt;, Func&lt;A,R&gt;&gt; s)</div>
+<div id="LC92">    { Rec&lt;A,R&gt; rec = f =&gt; n =&gt; s(f(f))(n);</div>
+<div id="LC93">        return rec(rec); // (g |-&gt; g@g) applied to f =&gt; ...</div>
+<div id="LC94">    }</div>
 creates the appropriately delayed self-application so that eval can "call itself" recursively. Here is @eval:
 
 </div>
-<div>� � Func&lt;Func&lt;@expression,@expression&gt;,Func&lt;@expression,@expression&gt;&gt;</div>
-<div id="LC49">��������<span style="color:#ff0000;"><strong>@eval</strong></span> = <strong><span style="color:#3366ff;">ev</span></strong> =&gt; <strong><span style="color:#339966;">ex</span></strong> =&gt;</div>
-<div id="LC50">������������(<strong><span style="color:#339966;">ex</span></strong> is @constant) ? <strong><span style="color:#339966;">ex</span></strong></div>
-<div id="LC51">������������: (<strong><span style="color:#339966;">ex</span></strong> is @binary) ?</div>
-<div id="LC52">������������@apply(</div>
-<div id="LC53">����������������(<span style="color:#339966;"><strong>ex</strong></span> as @binary).Op,</div>
-<div id="LC54">����������������<strong><span style="color:#3366ff;">ev</span></strong>((<strong><span style="color:#339966;">ex</span></strong> as @binary).Left),</div>
-<div id="LC55">����������������<span style="color:#3366ff;"><strong>ev</strong></span>((<span style="color:#339966;"><strong>ex</strong></span> as @binary).Right))</div>
-<div id="LC56">������������: default(@expression)</div>
-<div id="LC57">������������;</div>
+<div>    Func&lt;Func&lt;@expression,@expression&gt;,Func&lt;@expression,@expression&gt;&gt;</div>
+<div id="LC49">        <span style="color:#ff0000;"><strong>@eval</strong></span> = <strong><span style="color:#3366ff;">ev</span></strong> =&gt; <strong><span style="color:#339966;">ex</span></strong> =&gt;</div>
+<div id="LC50">            (<strong><span style="color:#339966;">ex</span></strong> is @constant) ? <strong><span style="color:#339966;">ex</span></strong></div>
+<div id="LC51">            : (<strong><span style="color:#339966;">ex</span></strong> is @binary) ?</div>
+<div id="LC52">            @apply(</div>
+<div id="LC53">                (<span style="color:#339966;"><strong>ex</strong></span> as @binary).Op,</div>
+<div id="LC54">                <strong><span style="color:#3366ff;">ev</span></strong>((<strong><span style="color:#339966;">ex</span></strong> as @binary).Left),</div>
+<div id="LC55">                <span style="color:#3366ff;"><strong>ev</strong></span>((<span style="color:#339966;"><strong>ex</strong></span> as @binary).Right))</div>
+<div id="LC56">            : default(@expression)</div>
+<div id="LC57">            ;</div>
 <div></div>
-<div><a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/remotableRecursion.linq" target="_blank">The entire example is hosted here</a>�as a LINQPad script. Please follow the links in this post for detailed explanations of Y and how .NET Expressions are remoted. In this example, the expressions are remotable; actually remoting them involves more machinery such as implementing IQueryable, IQbservable, serialization, and various transforms on LINQ .NET Expressions. Of course, we want to use LINQ itself to perform such transformations, and that will lead us into deeper waters.</div>
+<div><a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/remotableRecursion.linq" target="_blank">The entire example is hosted here</a> as a LINQPad script. Please follow the links in this post for detailed explanations of Y and how .NET Expressions are remoted. In this example, the expressions are remotable; actually remoting them involves more machinery such as implementing IQueryable, IQbservable, serialization, and various transforms on LINQ .NET Expressions. Of course, we want to use LINQ itself to perform such transformations, and that will lead us into deeper waters.</div>
