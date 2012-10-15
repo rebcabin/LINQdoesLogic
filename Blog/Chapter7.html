@@ -1,0 +1,129 @@
+In <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL6.SPR" target="_blank">EXAMPL6.SPR</a> [sic], Feraudy makes two points:
+<ol>
+	<li>Fail is Prolog's way dump out of a sequence of goals</li>
+	<li>backtracking automatically shifts evaluation to alternative definitions</li>
+</ol>
+Feraudy first shows just an ordinary sequence of goals
+<pre>    ((demo6)
+     (display success_goal1)
+     (display success_goal2)
+     (display success_goal3)
+     (display success_goal4)
+     (fail)
+     (display success_goal5)
+     (display success_goal6)
+     (display success_goal7)
+    )</pre>
+When executed, we see displays of success_goals 1 through 4, then a "No," Prolog's standard way of reporting that it doesn't have an answer (we can't tell the difference between a real "no" and a "don't know," as discussed in <a href="http://rebcabin.wordpress.com/2012/09/04/linq-does-logic-chapter-3-rewriting-conjunctions/" target="_blank">Chapter 3</a>).
+
+A nice way to mimic this in LINQ is with a sequence of Actions, which are functions that produce no results.
+<pre>    var demo6 = default(IEnumerable&lt; Action &gt; );
+
+    var displayMaker = new Func&lt;string, Action&gt;
+        (s =&gt; new Action
+            (() =&gt; Console.WriteLine(s)));
+
+    var fail = new Action(() =&gt;
+    {   throw new ApplicationException("fail");   });
+
+    demo6 = new Action [] {
+        displayMaker("success_goal1"),
+        displayMaker("success_goal2"),
+        displayMaker("success_goal3"),
+        displayMaker("success_goal4"),
+        fail,
+        displayMaker("success_goal5"),
+        displayMaker("success_goal6"),
+        displayMaker("success_goal7"),
+        };</pre>
+Of course, we need a clean way to execute this. It's often tricky to decide what to do with exceptions. Here, we'll just print the string "fail" so that our output resembles that produced by <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/VISUALSTUDIO/SPROLOG.sln" target="_blank">SProlog</a>.
+<pre>    var performSequence = new Action&lt;
+        IEnumerable&lt;Action&gt; &gt; (axs =&gt;
+        {    try
+            {    axs
+                    .Select(ax =&gt; {ax(); return 0;})
+                    .Distinct()
+                    .Dump()
+                    ;
+            } catch (Exception exception)
+            {   Console.WriteLine ("fail");    }    });
+
+    "".Dump("demo6"); 
+    performSequence(demo6);</pre>
+Now, in Feraudy's demo6_1, there happens to be an additional definition. It first replicates demo6, and then there is an alternative:
+<pre>    ((demo6_1)
+     (display success_goal1)
+     (display success_goal2)
+     (display success_goal3)
+     (display success_goal4)
+     (fail)
+     (display success_goal5)
+     (display success_goal6)
+     (display success_goal7)
+    )
+
+    ((demo6_1)
+     (display haha)
+     (nl)
+    )</pre>
+When Prolog encounters the fail, what does it do? Instead of saying "No," it backtracks. That just means it looks for alternative definitions before bailing out. The order of presentation of the alternative definitions is important. Prolog searches the first one first, the second one next, and so on.
+
+This is very similar to Mathematica's behavior (<a href="http://reference.wolfram.com/mathematica/guide/Mathematica.html" target="_blank">Mathematica</a> is the other travelling companion in our exploration of LINQ's doing Logic). So similar, in fact, that it's utterly straightforward to emulate EXAMPL6.SPR in Mathematica; it's barely even an exercise for the reader and we won't go into it here.
+
+Since the alternatives are presented sequentially, and the order matters, the representation in LINQ is obvious: a sequence of sequences of actions, or
+<pre>    var demo6_1 = default(
+        IEnumerable&lt; IEnumerable&lt; Action &gt; &gt;);
+
+    demo6_1 = new Action [] [] {
+        new Action [] {
+            displayMaker("success_goal1"),
+            displayMaker("success_goal2"),
+            displayMaker("success_goal3"),
+            displayMaker("success_goal4"),
+            fail,
+            displayMaker("success_goal5"),
+            displayMaker("success_goal6"),
+            displayMaker("success_goal7"),
+            },
+        new Action [] {
+            displayMaker("haha"),
+        },
+    };</pre>
+All we need to get this going, generally, is a new way of handling the exception that only prints "fail" if there are no alternatives remaining.
+<pre>    var performSequenceWithBacktracking = new Action&lt;
+        IEnumerable&lt; Action &gt; &gt; (axs =&gt;
+        {   axs
+                .Select(ax =&gt; {ax(); return 0;})
+                .Distinct()
+                .Dump()
+                ; });
+
+    var performSequencesWithBacktracking = new Action&lt;
+        IEnumerable&lt; IEnumerable&lt; Action &gt; &gt; &gt; (axss =&gt;
+        {   axss
+                .SelectMany(axs =&gt;
+                {    try
+                    {    performSequenceWithBacktracking(axs); }
+                    catch (Exception) {
+                        if (axss.Last() == axs)
+                            Console.WriteLine ("fail");   }
+                        return new [] {0}; })
+                .Distinct()
+                .Dump()
+                ; });</pre>
+In the following invocation, it won't print "fail" because the last alternative doesn't contain a fail.
+<pre>    "".Dump("demo6_1");
+    performSequencesWithBacktracking(demo6_1);</pre>
+But, if we change the second alternative of demo6_1 to contain an embedded fail
+<pre>    new Action [] {
+        displayMaker("haha"),
+        fail,
+        displayMaker("boohoo"),
+    },</pre>
+We get the printout of "fail," plus, one of the debugging "Dump" calls is skipped -- the one internal to "performeSequenceWithBacktracking."
+
+Note especially the use of "SelectMany," the mother of all LINQ combinators, in "performSequencesWithBacktracking."
+
+Do we ever need deeper levels of nesting, say sequences of sequences of sequences of Actions? Not if all alternatives to a single definition are presented at the same level of nesting. We see again that a single level of nesting is fundamental. It seems to suffice to capture all kinds of containment structure, much in the way that binary trees can represent n-ary trees.
+
+The <a href="http://www.linqpad.net/" target="_blank">LINQPad</a> script for this chapter is available here.

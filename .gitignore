@@ -15,6 +15,18 @@
 .DS_Store
 
 # Visual-Studio junk files
+*.res
+*.manifest
+*.idb
+*.obj
+*.exe
+*.ilk
+*.log
+*.pdb
+*.lastbuildstate
+*.cache
+*.rc
+*.tlog
 VISUALSTUDIO/_ReSharper*.*
 VISUALSTUDIO/Release
 ISUALSTUDIO/Debug
