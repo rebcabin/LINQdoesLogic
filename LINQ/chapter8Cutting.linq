@@ -12,65 +12,45 @@
 
 void Main()
 {
-#region demo6
-
-    var demo6 = default(IEnumerable< Action > );
-
-    var displayMaker = new Func<string, Action>
-        (s => new Action
-            (() => Console.WriteLine(s)));
-            
-    var fail = new Action(() => 
-    {   throw new ApplicationException("fail");   });
-
-    demo6 = new Action [] {
-        displayMaker("success_goal1"),
-        displayMaker("success_goal2"),
-        displayMaker("success_goal3"),
-        displayMaker("success_goal4"),
-        fail,
-        displayMaker("success_goal5"),
-        displayMaker("success_goal6"),
-        displayMaker("success_goal7"),
-        };
-        
-    var performSequence = new Action<
-        IEnumerable<Action> > (axs =>
-        {   try 
-            {   axs
-                    .Select(ax => {ax(); return 0;})
-                    .Distinct()
-                    .Dump()
-                    ;
-            } catch (Exception exception) 
-            {   Console.WriteLine ("fail");   }   });
-
-    "".Dump("demo6");
-    performSequence(demo6);
-#endregion
-
-#region demo6_1
-    var demo6_1 = default(
-        IEnumerable< IEnumerable< Action > >);
-
-    demo6_1 = new Action [] [] {
-        new Action [] {
-            displayMaker("success_goal1"),
-            displayMaker("success_goal2"),
-            displayMaker("success_goal3"),
-            displayMaker("success_goal4"),
-            fail,
-            displayMaker("success_goal5"),
-            displayMaker("success_goal6"),
-            displayMaker("success_goal7"),
-        },
-        new Action [] {
-            displayMaker("haha"),
-            fail,
-            displayMaker("boohoo"),
-        },
-    };
+    // Model all predicates as functions that produce actions. 
+    // With and without the "cut."  "Cut" means fail and do not 
+    // backtrack.
+    /**/
+    var matches = new List<Tuple<string, string>>();
     
+    var is_prolog_variable = new Func<string, bool>( 
+        (string s) => s.Substring(0, 1) ==
+            s.Substring(0, 1).ToUpper());
+    /**/
+    var fail = new Func<Action> (() => new Action(() => 
+    {   throw new FailException();   }));
+
+    var cut = new Func<Action> (() => new Action(() => 
+    {   throw new CutException();   }));
+	
+    var lives_in_maker = new Func<string, string, Action>(
+        (person, country) => new Action (() => {
+            Console.WriteLine ("{{person: \"{0}\", country: \"{1}\"}}",
+                person, country);
+            return;
+        }));
+        
+    var north_american_maker = new Func<string, Action>(
+        (person) => new Action(() => {
+            if(is_prolog_variable(person)){
+            }
+            return;
+        }));
+
+    var demo_7 = 
+        new [] {
+            new [] {
+                lives_in_maker("anca", "usa"),
+                lives_in_maker("brian", "usa"),
+                lives_in_maker("murray", "canada"),
+                cut(),
+            }};
+
     var performSequenceWithBacktracking = new Action<
         IEnumerable< Action > > (axs =>
         {   axs
@@ -85,16 +65,22 @@ void Main()
                 .SelectMany(axs =>
                 {   try
                     {   performSequenceWithBacktracking(axs);   }
-                    catch (Exception) {
+                    catch (FailException) {
                         if (axss.Last() == axs)
                             Console.WriteLine ("fail");
+                    }
+                    catch (CutException) {
+                        if (axss.Last() == axs)
+                            Console.WriteLine ("cut");
                     }
                     return new [] {0};   })
                 .Distinct()
                 .Dump()
                 ;   });
 
-    "".Dump("demo6_1");
-    performSequencesWithBacktracking(demo6_1);
-#endregion
+    "".Dump("demo_7");
+    performSequencesWithBacktracking(demo_7);
 }
+
+class FailException : Exception {}
+class CutException : Exception {}
