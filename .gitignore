@@ -18,6 +18,7 @@
 
 # Visual-Studio junk files
 *.res
+*.suo
 *.manifest
 *.idb
 *.ilk
