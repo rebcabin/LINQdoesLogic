@@ -2,6 +2,8 @@
 *.slo
 *.lo
 *.o
+*.obj
+*.exe
 
 # Compiled Dynamic libraries
 *.so
@@ -33,6 +35,12 @@ ISUALSTUDIO/Debug
 VISUALSTUDIO/*.*sdf*
 VISUALSTUDIO/*.suo
 VISUALSTUDIO/ipch
+*.log
+*.tlog
+*.pdb
+*.idb
+*.ilk
+*.lastbuildstate
 
 # Emacs junk files
 *.*#
