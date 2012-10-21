@@ -20,8 +20,6 @@
 *.res
 *.manifest
 *.idb
-*.obj
-*.exe
 *.ilk
 *.log
 *.pdb
@@ -35,12 +33,6 @@ ISUALSTUDIO/Debug
 VISUALSTUDIO/*.*sdf*
 VISUALSTUDIO/*.suo
 VISUALSTUDIO/ipch
-*.log
-*.tlog
-*.pdb
-*.idb
-*.ilk
-*.lastbuildstate
 
 # Emacs junk files
 *.*#
