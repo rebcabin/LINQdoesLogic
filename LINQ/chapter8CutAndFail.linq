@@ -38,7 +38,15 @@ public class CutException : Exception
 }
 
 public static class Extensions
-{
+{   /** /
+    public static void evaluate(
+        this IEnumerable< IEnumerable<dynamic> > alternatives)
+    {   alternatives
+            .SelectMany(predicates => predicates)
+            .Dump()
+            ;
+    }
+    /**/
     public static void evaluate(
         this IEnumerable< IEnumerable<dynamic> > alternatives)
     {   try 
@@ -50,7 +58,7 @@ public static class Extensions
         catch (CutException ce) 
         {   ce.payload.Dump();   }
     }
-
+    /**/
     public static IEnumerable<dynamic> evaluate(
         this IEnumerable<dynamic> alternative)
     {   var result = new List<dynamic>();

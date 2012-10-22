@@ -9,7 +9,11 @@
 
 ((north_american P)
  (lives_in P usa)
- (cut)  /* try "fail" here; try nothing here; use (trace) */
+ (cut)  
+/* experiment without the cut; 
+ * experiment with fail; 
+ * use (trace) to monitor internal execution; 
+ */
 )
 ((north_american P)
  (lives_in P canada)
