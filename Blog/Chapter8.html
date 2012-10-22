@@ -1,0 +1,104 @@
+This time, we model Prolog's <a href="http://en.wikibooks.org/wiki/Prolog/Cuts_and_Negation" target="_blank"><em>cut</em> and <em>fail</em></a> control pseudopredicates using <a href="http://rebcabin.wordpress.com/2012/10/14/linq-does-logic-chapter-7-backtracking/" target="_blank">Chapter 7's</a> IEnumerable of IEnumerables. In Chapter 7, we found that <em>fail</em> triggers backtracking and that backtracking is natural in LINQ if alternatives are represented with exactly one level of IEnumerable nesting. Now, we dig into Feraudy's <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/SPR/EXAMPL7.SPR" target="_blank">EXAMPL7.SPR</a> [sic] to find a new exploit of that structure: the <em>cut</em>, which immediately bails out of all backtracking, producing "the nearest" result.
+
+In keeping with the exploratory spirit of this blog, rather than attempt a "full-fidelity" emulation of Prolog's <em>cut</em>, we'll just reproduce Feraudy's example as naturally as we can in LINQ, admitting that "naturally" is a subjective judgment, a matter of taste and aesthetics. We also admit that an early attempt at a full-fidelity emulation of <em>cut</em> looked like it was going down a slippery slope to an <em>implementation</em> of Prolog-proper in LINQ, and that is not at all what we want, at least not at this stage of our explorations. Instead, we're looking for easy ways to get the effect of Prolog using LINQ in a straightforward way.
+
+Feraudy presents the following factbase:
+<pre>    (lives_in anca usa)
+    (lives_in brian usa)
+    (lives_in murray canada)</pre>
+and the following alternative rules:
+<pre>    ((north_american P)
+      (lives_in P usa)
+      (cut) 
+      /* experiment without the cut; 
+       * experiment with fail; 
+       * use (trace) to monitor internal execution; 
+       */
+    )
+    ((north_american P)
+     (lives_in P canada)
+    )</pre>
+The interpretation is that someone is North-American if he or she lives in the USA or in Canada. The <em>cut</em> just means "as soon as you find someone in the USA, report that person and stop looking for more" (typical chauvinism, eh?).
+
+In <a href="https://github.com/rebcabin/LINQdoesLogic/tree/master/VISUALSTUDIO" target="_blank">Feraudy's interpreter</a>, you can evaluate this goal with commands like the following:
+<pre>    (consult "SPR/EXAMPL7.SPR")
+    (findall P (north_american P) X)</pre>
+Let's try three versions of Feraudy's example, one with no control pseudopredicates -- no <em>cut</em> and no <em>fail</em>; one with our old friend <em>fail;</em> which triggers order-preserving backtracking; and one with <em>cut</em>, and see what we get.
+
+First, represent the fact base the way we did in earlier <a href="http://rebcabin.wordpress.com/2012/08/31/linq-does-logic-chapter-2-conjunctions/" target="_blank">chapters</a> and <a href="https://github.com/rebcabin/LINQdoesLogic/blob/master/LINQ/exampl3.linq" target="_blank">scripts</a>, only this time using <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx" target="_blank">anonymous types</a> and C# <a href="http://msdn.microsoft.com/en-us/library/dd264736.aspx" target="_blank">dynamic</a>, for reasons that become clear below
+<pre>    var lives_in = new dynamic [] {
+        new {person = "anca", country = "usa"},
+        new {person = "brian", country = "usa"}, 
+        new {person = "murray", country = "canada"},
+    };</pre>
+This is just a non-nested IEnumerable because there are no rules, here, only facts. Rules are conjunctions, nested one more level. Let's first write Feraudy's rule alternatives, with no <em>cut</em> and no <em>fail</em>:
+<pre>    var north_american_1 = new [] {
+        lives_in.Where(l =&gt; l.country == "usa"),
+        lives_in.Where(l =&gt; l.country == "canada"),
+    };</pre>
+When we "evaluate" this rule, essentially the same as asking Feraudy's Prolog interpreter to <em>findall</em>, we expect to see results for anca, brian, and murray:
+<pre>    north_american_1.evaluate();</pre>
+<a href="http://rebcabin.files.wordpress.com/2012/10/capture005.jpg"><img class="alignnone size-full wp-image-461" title="Capture005" alt="" src="http://rebcabin.files.wordpress.com/2012/10/capture005.jpg" height="123" width="270" /></a>
+
+Great. What's the code for <em>evaluate</em>? Showing the full code will jump us ahead of <em>cut</em>, so let's take it on faith for the moment.
+
+Next, slip in a <em>fail</em>. Remember, <em>fail</em> says "give up looking down this conjunction and consider the next alternative." A great way to model this is just to replace results with the empty IEnumerable. <em>SelectMany</em> will flatten those away. The deep thing happening here is that modeling alternatives with exactly one level of nesting sets up <em>SelectMany</em> as the evaluator because it removes exactly one level of nesting. We have a matching pair.
+
+Write <i>fail</i> as follows, inside a public static class named <em>Extensions</em>, so that it's an extension method:
+<pre>    public static IEnumerable&lt;dynamic&gt; Fail (this IEnumerable&lt;dynamic&gt; these)
+    { return new dynamic [] {}; }</pre>
+This <em>fail</em> takes whatever it gets and discards it. Easy.
+
+Our intrepid application programmer now modifies the knowledge base to the following:
+<pre>    var north_american_2 = new [] {
+        lives_in.Where(l =&gt; l.country == "usa")
+                .Fail(),
+        lives_in.Where(l =&gt; l.country == "canada"),
+    };</pre>
+Think for a moment what you expect the output to be. Every time evaluation gets to the fail, results so far should be discarded and evaluation should proceed to the next alternative. We should see no one from the USA and just murray from Canada. A complying version of evaluate now becomes obvious:
+<pre>    public static void evaluate(
+        this IEnumerable&lt; IEnumerable&lt;dynamic&gt; &gt; alternatives)
+    {    alternatives
+            .SelectMany(predicates =&gt; predicates)
+            .Dump()
+            ;   
+    }</pre>
+<em>SelectMany</em> flattens out the discarded USA-dwellers and our results are:
+<a href="http://rebcabin.files.wordpress.com/2012/10/capture006.jpg"><img class="alignnone size-full wp-image-464" title="Capture006" alt="" src="http://rebcabin.files.wordpress.com/2012/10/capture006.jpg" height="74" width="258" /></a>
+
+<em>Cut</em> says "get all the way out and produce the 'nearest' result." Here, "nearest" must mean "the first result of all the possibilities." Prolog represents "all possibilities" as a reference into the knowledge base including variables that get instantiated via unification, and we're not modeling that process. Instead, in LINQ, we represent all possibilities as a filter -- a <em>.Where</em> on an IEnumerable. A <em>cut</em> following the statement of such a filter should pick the first item in the filtered list and throw it out in an exception to be caught in <em>evaluate</em>. That's the easiest way to bail out of backtracking.
+
+First, a custom exception that can carry a payload, the "nearest" result:
+<pre>    public class CutException : Exception
+    { public IEnumerable&lt;dynamic&gt; payload; }</pre>
+Next, a modified <em>evaluate</em> that catches these exceptions:
+<pre>    public static void evaluate(
+        this IEnumerable&lt; IEnumerable&lt;dynamic&gt; &gt; alternatives)
+    {    try
+        {    alternatives
+            .SelectMany(predicates =&gt; predicates.evaluate())
+            .Dump()
+            ;
+        }
+        catch (CutException ce) { ce.payload.Dump(); }   }</pre>
+We need an inner evaluate that can test whether an item "wants" to throw a <em>cut</em> exception. A slightly generalized way to do this is to check for the existence of an <em>action</em> property on a <em>dynamic</em>. If present, execute it. This is a general way to insert side effects into data items, at the cost of making everything dynamic. This cost is non-negligible, and, in a real-world application of these techniques, must be soberly traded off against other concerns. But it makes for a very pretty bit of code, here.
+
+The best way to test for existence of a property on a dynamic object seems to be just to try it and catch the exception if the object is not present. This requires the Microsoft.CSharp.RuntimeBinder namespace and Microsoft.CSharp.dll, part of the DLR runtime. Our inner <em>evaluate</em> is as follows:
+<pre>    public static IEnumerable&lt;dynamic&gt; evaluate(
+        this IEnumerable&lt;dynamic&gt; alternative)
+    {   var result = new List&lt;dynamic&gt;();
+        foreach (var predicate in alternative)
+        {   try { predicate.action(); }
+            catch (RuntimeBinderException e) { /*e.Dump();*/ }
+            result.Add(predicate);
+        }
+        return result;   }</pre>
+<em>Cut</em> now inserts an action that throws the <em>cut</em> exception with the appropriate payload:
+<pre>public static IEnumerable&lt;dynamic&gt; Cut (this IEnumerable&lt;dynamic&gt; these)
+    {   return new [] {new {action = new Action(() =&gt;
+        {   throw new CutException {payload = these.Take(1)}; })
+}};   }</pre>
+When we run it, we get our expected chauvinistic result:
+<a href="http://rebcabin.files.wordpress.com/2012/10/capture007.jpg"><img class="alignnone size-full wp-image-466" title="Capture007" alt="" src="http://rebcabin.files.wordpress.com/2012/10/capture007.jpg" height="74" width="259" /></a>
+
+This code is available for you to play with <a href="https://github.com/rebcabin/LINQdoesLogic" target="_blank">in the usual spot</a>.
