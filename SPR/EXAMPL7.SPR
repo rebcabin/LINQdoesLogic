@@ -9,7 +9,7 @@
 
 ((north_american P)
  (lives_in P usa)
- (cut)
+ (cut)  /* try "fail" here; try nothing here; use (trace) */
 )
 ((north_american P)
  (lives_in P canada)
@@ -22,13 +22,17 @@
 /* If you ask the following question:
    
   (north_american Somebody)
-
+ 
  you get only one answer out of an expected 3!
  
  This is because once execution gets to the cut no more
  other solutions for the goal (north_american Somebody)
  are considered
 
+ Turn on (trace) and try (fail) above, instead of (cut).
+ Try to predict the answer with (fail) to test your 
+ understanding of the two predicates.
+ 
  The cut is used in the definition of "not" which is in 
  sprolog.ini and it is used in the file help.spr
 
